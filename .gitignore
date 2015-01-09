@@ -1,1 +1,19 @@
+# --------------------
+# Node Files
+# --------------------
+.nodemonignore
+npm-debug.log
 node_modules/
+
+
+# --------------------
+# Bower Files
+# --------------------
+.bower-*/
+bower_components
+public/libs
+
+# --------------------
+# App Files
+# --------------------
+app/config.js

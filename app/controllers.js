@@ -459,6 +459,7 @@ module.exports = {
 			});
 		}
 	},
+
 	teams: {
 		getAll: function (next){
 			Team.find(function (err, teams){
@@ -728,6 +729,21 @@ module.exports = {
 					}
 				});
 			}
+		}
+	},
+
+	users : {
+		getInfo: function (data, next){
+			User.findById(data.id, function (err, consumer){
+				if(err){
+					return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+				}
+				if(!consumer){
+					return next({ status: 500, content: { code: 10, description: 'user not found', message: 'User not found' } });
+				} else {
+					return next({ status: 200, content: { username: consumer.account.username.original, email: consumer.account.email.original, role: consumer.account.role, team: consumer.game.team, duty: consumer.game.duty } });
+				}
+			});
 		}
 	}
 };

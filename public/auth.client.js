@@ -29,10 +29,24 @@ myApp.controller('UserCtrl', function ($scope, $http, $window) {
       .post('/signin', $scope.user) //.post('/signup', $scope.user) .post('/signin', $scope.user) 
       .success(function (data, status, headers, config) {
         $window.sessionStorage.token = data.token;
-        $scope.isAuthenticated = true;
-        var encodedProfile = data.token.split('.')[1];
-        var profile = JSON.parse(url_base64_decode(encodedProfile));
-        $scope.welcome = 'Welcome ' + profile.id;
+        //$scope.isAuthenticated = true;
+        // var encodedProfile = data.token.split('.')[1];
+        // var profile = JSON.parse(url_base64_decode(encodedProfile));
+        //$scope.welcome = 'Welcome ' + profile.id;
+        $http
+          .get('/api/userinfo') 
+          .success(function (data, status, headers, config) {
+            console.log(data);
+            $scope.user = {username: data.username, email: data.email, role: data.role, duty: data.duty, team: data.team};
+            $scope.welcome = 'Welcome, ' +  $scope.user.username;
+            $scope.isAuthenticated = true;
+            
+          })
+          .error(function (data, status, headers, config) {
+            console.log(data);
+            $scope.isAuthenticated = false;
+            delete $window.sessionStorage.token;
+          });
         if (typeof Storage !== 'undefined') 
           localStorage.setItem('token', data.token); // Store
       })
@@ -83,26 +97,59 @@ myApp.controller('UserCtrl', function ($scope, $http, $window) {
     //   console.log(data);
     // });
 
-    $http({url: '/api/teams', method: 'GET', params: {name: 'ChobanitE'}})
+    // $http({url: '/api/teams', method: 'GET', params: {name: 'ChobanitE'}})
+    // .success(function (data, status, headers, config) {
+    //   console.log(data);
+    // })
+    // .error(function (data, status, headers, config) {
+    //   console.log(status);
+    //   console.log(data);
+    // });
+    
+    $http
+    .get('/api/userinfo') 
     .success(function (data, status, headers, config) {
       console.log(data);
     })
     .error(function (data, status, headers, config) {
-      console.log(status);
       console.log(data);
     });
-
   };
   
   function init(){
     if($window.sessionStorage.token){
-      $scope.isAuthenticated = true;
+      $http
+        .get('/api/userinfo') 
+        .success(function (data, status, headers, config) {
+          console.log(data);
+          $scope.isAuthenticated = true;
+          $scope.user = {username: data.username, email: data.email, role: data.role, duty: data.duty, team: data.team};
+
+        })
+        .error(function (data, status, headers, config) {
+          console.log(data);
+          $scope.isAuthenticated = false;
+          delete $window.sessionStorage.token;
+        });
     } else {
         if (typeof Storage !== 'undefined'){
           if(localStorage.getItem('token')){
             $window.sessionStorage.token = localStorage.getItem('token'); // Retrieve
             //should make a secret request to actually check for auth and if no erros continue
-            $scope.isAuthenticated = true;
+            $http
+              .get('/api/userinfo') 
+              .success(function (data, status, headers, config) {
+                console.log(data);
+                $scope.isAuthenticated = true;
+                $scope.user = {username: data.username, email: data.email, role: data.role, duty: data.duty, team: data.team};
+              })
+              .error(function (data, status, headers, config) {
+                console.log(data);
+                $scope.isAuthenticated = false;
+                delete $window.sessionStorage.token;
+              });
+
+            
 
           }
         }  

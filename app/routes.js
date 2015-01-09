@@ -79,7 +79,7 @@ module.exports = function(app) {
       return res.status(data.status).json(data.content);
     });
   });
-
+  
   // send request for recoverying forgotten password, required params 'username'
   app.post('/recovery/request', function (req, res){
     var username = sanitizeHtml(req.body.username, { allowedTags: [], allowedAttributes: [] });
@@ -102,7 +102,9 @@ module.exports = function(app) {
     if(typeof req.body.password !== 'string'){
       return res.status(400).json({ code: 2, field: 'password', description: 'password is required', message: 'Password cannot be blank' });
     }
-    // regexp
+    if(!/^[a-zA-Z0-9_-]{6,20}$/.test(password)){
+      return res.status(400).json({ code: 3, field: 'password', description: 'password validation is wrong', message: 'Password must contain only letters, numbers or symbols "-", " _" with min 6 and max 20 symbols' });
+    }
     if(typeof req.body.recoveryCode !== 'string'){
       return res.status(400).json({ code: 2, field: 'recoveryCode', description: 'recovery code is required', message: 'Recovery code cannot be blank' });
     }
@@ -121,6 +123,13 @@ module.exports = function(app) {
   // get all records from Hall Of Fame
   app.get('/halloffame', function (req, res){
     return controllers.hallOfFame.getAll(function (data){
+      return res.status(data.status).json(data.content);
+    });
+  });
+
+  // get user info
+  app.get('/api/userinfo', function (req, res){
+    return controllers.users.getInfo({ id: req.user.id }, function (data){
       return res.status(data.status).json(data.content);
     });
   });

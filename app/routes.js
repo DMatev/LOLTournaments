@@ -8,6 +8,7 @@ var hallOfFame = require('./controllers/hallOfFame');
 var user = require('./controllers/user');
 var teams = require('./controllers/teams');
 var myTeam = require('./controllers/myTeam');
+var tournaments = require('./controllers/tournaments');
 
 module.exports = function(app) {
 
@@ -43,6 +44,10 @@ module.exports = function(app) {
   // code 21-team is full
   // code 22-captain cant kick himself
   // code 23-player not found
+  // code 24-tournament not found
+  // code 25-tournament is not in 'signing' stage
+  // code 26-team already signed in tournament
+  // code 27-team is not full
 
   // signin, required params 'username, password'
   app.post('/signin', function (req, res){
@@ -377,6 +382,48 @@ module.exports = function(app) {
       return res.status(400).json({ code: 2, field: 'approved', description: 'approved is required', message: 'Approved cannot be blank' });
     }
     return myTeam.requests.edit({ consumer: { id: req.user.id }, approved: req.body.approved, name: name }, function (data){
+      return res.status(data.status).json(data.content);
+    });
+  });
+
+  // sign my team for tournament, required params 'name'
+  app.post('/api/myteam/tournament', function (req, res){
+    var name = sanitizeHtml(req.body.name, { allowedTags: [], allowedAttributes: [] });
+    if(typeof req.body.name !== 'string'){
+      return res.status(400).json({ code: 2, field: 'name', description: 'name is required', message: 'Name cannot be blank' });
+    }
+    return myTeam.tournament.signin({ consumer: { id: req.user.id }, name: name }, function (data){
+      return res.status(data.status).json(data.content);
+    });
+  });
+
+  // create tournament, required params 'name, numberOfCompetitors', optinal params 'type'
+  app.post('/api/tournaments', function (req, res){
+    var name = sanitizeHtml(req.body.name, { allowedTags: [], allowedAttributes: [] });
+    var type = sanitizeHtml(req.body.type, { allowedTags: [], allowedAttributes: [] });
+    var number = req.body.numberOfCompetitors;
+    var tournament = {};
+    if(typeof req.body.name !== 'string'){
+      return res.status(400).json({ code: 2, field: 'name', description: 'name is required', message: 'Name cannot be blank' });
+    }
+    if(!/^[a-zA-Z0-9_-\s]{3,35}$/.test(name)){
+      return res.status(400).json({ code: 3, field: 'name', description: 'name validation is wrong', message: 'Team name must contain only letters, space, numbers or symbols "-", " _" with min 3 and max 35 symbols' }); 
+    }
+    if(typeof req.body.numberOfCompetitors !== 'number'){
+      return res.status(400).json({ code: 2, field: 'numberOfCompetitors', description: 'numberOfCompetitors is required', message: 'Number of competitors cannot be blank' });
+    }
+    if(!((number != 0) && !(number & (number - 1)))){
+      return res.status(400).json({ code: 3, field: 'numberOfCompetitors', description: 'numberOfCompetitors validation is wrong', message: 'Number of competitors must be positive integer number powered of 2' }); 
+    }
+    if((number < 4) || (number > 16)){
+      return res.status(400).json({ code: 3, field: 'numberOfCompetitors', description: 'numberOfCompetitors validation is wrong', message: 'Number of competitors must be 4,8 or 16' }); 
+    }
+    tournament.name = name;
+    tournament.numberOfCompetitors = number;
+    if(typeof req.body.type === 'string'){
+      tournament.type = type;
+    }
+    return tournaments.create({ consumer: { id: req.user.id }, tournament: tournament }, function (data){
       return res.status(data.status).json(data.content);
     });
   });

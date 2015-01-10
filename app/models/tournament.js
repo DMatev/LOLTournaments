@@ -1,19 +1,25 @@
 var mongoose = require('mongoose');
 //unfinished
+
 var tournamentSchema = mongoose.Schema({
     
-	name: String,
+	name: {
+        original: String,
+        lowerCase: String
+    },
     type: { type: String, default: 'Direct eleminations' },
-    date: {
-        start: Date,
-        end: Date
-    },
-    phase: {
-        start: Date,
-        end: Date,
-        name: String
-    },
-    bracket: []
+    numberOfCompetitors: Number,
+    stage: { type: String, default: 'signing' },
+    teams: [{
+        name: String,
+        captain: String,
+        players: [ String ]
+    }],
+    resultsFromCaptains:[{ 
+        name: String,
+        won: Boolean
+    }],
+    resultsFromAdmin:[]
 });
 
 module.exports = mongoose.model('Tournament', tournamentSchema);

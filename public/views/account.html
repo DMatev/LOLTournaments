@@ -1,0 +1,9 @@
+<div class="container">
+	<div class="row">
+		<h2>account page for user info if authenticated or login+signup if not authenticated</h2>
+	</div>
+	<!--login signup-->
+	<div ng-show="!isAuthenticated" ng-include  src="'views/account-login.html'"></div>
+	<!--Information-->
+	<div ng-show="isAuthenticated" ng-include src="'views/account-info.html'"></div>
+</div>

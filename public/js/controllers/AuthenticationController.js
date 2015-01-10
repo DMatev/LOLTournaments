@@ -1,7 +1,7 @@
 'use strict';
 angular.module('AuthenticationController', [])
   .controller('UserCtrl', function ($scope, $http, $window, $state) {
-    $scope.user = {username: 'admin', password: 'kobakaa', email: 'dido_bido@abv.bg'}; //{username: 'john.doe', password: 'foobar'};
+    $scope.user = {}; //{username: 'john.doe', password: 'foobar'};
     $scope.isAuthenticated = false;
     $scope.welcome = '';
     $scope.message = '';
@@ -75,6 +75,7 @@ angular.module('AuthenticationController', [])
     };
 
     $scope.logout = function () {
+      $scope.user={};
       $scope.welcome = '';
       $scope.message = '';
       $scope.isAuthenticated = false;

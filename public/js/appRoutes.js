@@ -10,7 +10,7 @@ angular.module('appRoutes',[])
         })
         .state('account',{
           url:'/account',
-          templateUrl:'views/login.html'
+          templateUrl:'views/account.html'
         });
 
 

@@ -54,6 +54,8 @@ module.exports = function(app) {
   // code 31-tournament is full
   // code 32-tournament is not full or is not in 'signing' stage
   // code 33-tournament stage is not 'running'
+  // code 34-not all tournament matches are finished correctly
+  // code 35-team not found in tournament`s stage
 
   // signin, required params 'username, password'
   app.post('/signin', function (req, res){
@@ -410,7 +412,6 @@ module.exports = function(app) {
     });
   });
 
-  // NOT WORKING CORRECT
   // send match score for my team at the tournament i am, required params 'won'
   app.post('/api/myteam/tournament/score', function (req, res){
     var won = sanitizeHtml(req.body.won, { allowedTags: [], allowedAttributes: [] });

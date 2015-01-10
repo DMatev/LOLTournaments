@@ -133,9 +133,17 @@ function moveCurrentStageToHistory(data, next){
 					} else {
 						tournament.moveCurrentStageToHistory(function (err, history, currentStage, stageisRunning, stageisOver){
 							if(err){
-								return next({ status: 400, content: { code: 33, description: 'tournament stage is not "running"', message: 'You cant do this action right now, please try again later' } });
+								if(err === 1){
+									return next({ status: 400, content: { code: 33, description: 'tournament stage is not "running"', message: 'Torunament stage is not "running"' } });
+								}
+								if(err === 2) {
+									return next({ status: 400, content: { code: 34, description: 'uncorrect matches', message: 'Not all matches are finished correctly' } });
+								}
+								if(err === 3){
+									return next({ status: 400, content: { code: 35, description: 'last stage of tournament', message: 'This tournament is in his last stage' } });
+								}
 							} else {
-								Tournament.update({ 'name.lowerCase': data.name.toLowerCase() }, { $push: { history: history }, $set: {'stage.isRunning':stageisRunning,'stage.isOver':stageisOver, currentStage: currentStage} }, { multi: true }, function (err, result){
+								Tournament.update({ 'name.lowerCase': data.name.toLowerCase() }, { $push: { history: history }, $set: {'stage.isRunning': stageisRunning, 'stage.isOver': stageisOver, currentStage: currentStage } }, { multi: true }, function (err, result){
 									if(err){
 										return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 									} else {

@@ -430,6 +430,7 @@ function signinTournament(data, next){
 
 function sendScoreTournament(data, next){
 	var found = false;
+	var isSignedAtStage = false;
 	User.findById(data.consumer.id, function (err, consumer){
 		if(err){
 			return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
@@ -468,27 +469,36 @@ function sendScoreTournament(data, next){
 									if(!tournament){
 										return next({ status: 400, content: { code: 24, description: 'tournament not found', message: 'Your team is not signed at tournament' } });
 									} else {
-										if(tournament.stage !== 'competing'){
-											return next({ status: 400, content: { code: 29, description: 'tournament is not in "competing" stage', message: 'Tournament is not in "competing" stage' } });
+										if(!tournament.stage.isRunning){
+											return next({ status: 400, content: { code: 29, description: 'tournament is not in "running" stage', message: 'Tournament is not in "running" stage' } });
 										} else {
-											for(var i=0; i<tournament.resultsFromCaptains.length; i++){
-												if(consumer.game.team === tournament.resultsFromCaptains[i].name){
-													found = true;
-													return next({ status: 400, content: { code: 30, description: 'captain already send match score', message: 'You already send your match score' } });
+											for(var j=0; j<tournament.currentStage.matches.length; j++){
+												if((consumer.game.team === tournament.currentStage.matches[j].team1 || consumer.game.team === tournament.currentStage.matches[j].team2) && tournament.currentStage.matches[j].winner === 2){
+													isSignedAtStage = true;
+													j=tournament.currentStage.matches.length;
+													for(var i=0; i<tournament.resultsFromCaptains.length; i++){
+														if(consumer.game.team === tournament.resultsFromCaptains[i].name){
+															found = true;
+															return next({ status: 400, content: { code: 30, description: 'already send match score', message: 'You already send your match score' } });
+														}
+													}
+													if(!found){
+														var score = {};
+														score.name = consumer.game.team;
+														score.won = data.won;
+														tournament.resultsFromCaptains.push(score);
+														tournament.save(function (err){
+															if(err){
+																return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+															} else {
+																return next({ status: 200, content: 'You successfully send your match score' });
+															}
+														});
+													}
 												}
 											}
-											if(!found){
-												var score = {};
-												score.name = consumer.game.team;
-												score.won = data.won;
-												tournament.resultsFromCaptains.push(score);
-												tournament.save(function (err){
-													if(err){
-														return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
-													} else {
-														return next({ status: 200, content: 'You successfully send your match score' });
-													}
-												});
+											if(!isSignedAtStage){
+												return next({ status: 400, content: { code: 35, description: 'team not found in tournament`s stage', message: 'Your team is not competting in this tournament stage' } });
 											}
 										}
 									}

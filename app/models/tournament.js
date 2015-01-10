@@ -29,7 +29,7 @@ var tournamentSchema = mongoose.Schema({
         matches: [{
             team1: String,
             team2: String,
-            winner: { type: Number, default: 3 } //0 for team 1 or 1 for team 2, 3 for not known yet
+            winner: { type: Number, default: 2 } //0 for team 1 or 1 for team 2, 2 for not known yet
         }]
     },
     history: []
@@ -56,36 +56,42 @@ tournamentSchema.methods.makeFirstStage = function (next){
 };
 
 tournamentSchema.methods.moveCurrentStageToHistory = function (next){
-    var pool = [], found = false;
+    var pool = [], found = false, history = {};
     if(this.stage.isRunning){
         for(var i=0; i<this.currentStage.matches.length; i++){
-            if(this.currentStage.matches[i].winner === 3){
-                next(2); // there matches that are not decided
+            if(this.currentStage.matches[i].winner === 2){
+                return next(2); //there matches that are not decided
             }
         }
         if(!found){
-            if(this.currentStage.matches.length > 2){
-                this.history.push(this.currentStage);
-                this.currentStage = {};
-                this.currentStage.start = new Date();
-                for(var i=0; i<this.histroy[this.history.length-1].matches.length; i++){
-                    if(this.histroy[this.history.length-1].matches[i].winner == 1){
-                        pool.push(this.histroy[this.history.length-1].matches[i].team1);
+            if(this.currentStage.matches.length >= 2){
+                history.start = this.currentStage.start;
+                history.matches =[];
+                for(var i=0; i<this.currentStage.matches.length; i++){
+                    match = {};
+                    match.winner = this.currentStage.matches[i].winner;
+                    match.team1 = this.currentStage.matches[i].team1;
+                    match.team2 = this.currentStage.matches[i].team2
+                    match._id = this.currentStage.matches[i]._id;
+                    history.matches.push(match);
+                    if(this.currentStage.matches[i].winner == 0){
+                        pool.push(this.currentStage.matches[i].team1);
                     } else {
-                        pool.push(this.histroy[this.history.length-1].matches[i].team2);
+                        pool.push(this.currentStage.matches[i].team2);
                     }
                 }
+                this.currentStage.start = new Date();
                 this.currentStage.matches = [];
                 for(var i=0; i<pool.length; i=i+2){
                     this.currentStage.matches.push({ team1: pool[i], team2: pool[i+1] })
                 }
-                return next(null, this.history, this.currentStage, true, false);
+                return next(null, history, this.currentStage, true, false);
             } else {
-                return next(null, this.currentStage, null, false, true);
+                return next(3); //finishing left
             }
         }
     } else {
-        next(1); //stage is not 'running'
+        return next(1); //stage is not 'running'
     }
 };
 

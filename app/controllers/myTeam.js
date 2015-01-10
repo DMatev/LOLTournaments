@@ -388,33 +388,111 @@ function signinTournament(data, next){
 													}
 												}
 												if(!found){
-													var signingTeam = {};
-													signingTeam.name = team.name.original;
-													signingTeam.captain = team.captain;
-													signingTeam.players = [];
-													for(var j=0; j<team.players.length; j++){
-														signingTeam.players.push(team.players[j]);
-													}
-													tournament.teams.push(signingTeam);
-													tournament.save(function (err){
-														if(err){
-															return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
-														} else {
-															team.status = 'signed';
-															team.save(function (err){
-																if(err){
-																	return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
-																} else {
-																	return next({ status: 200, content: 'You successfully signed your team at tournament' });
-																}
-															});
+													if(tournament.teams.length < tournament.numberOfCompetitors){
+														var signingTeam = {};
+														signingTeam.name = team.name.original;
+														signingTeam.captain = team.captain;
+														signingTeam.players = [];
+														for(var j=0; j<team.players.length; j++){
+															signingTeam.players.push(team.players[j]);
 														}
-													});
+														tournament.teams.push(signingTeam);
+														tournament.save(function (err){
+															if(err){
+																return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+															} else {
+																team.status = 'signed';
+																team.save(function (err){
+																	if(err){
+																		return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+																	} else {
+																		return next({ status: 200, content: 'You successfully signed your team at tournament' });
+																	}
+																});
+															}
+														});
+													} else {
+														return next({ status: 400, content: { code: 31, description: 'tournament is full', message: 'Tournament is full' } });
+													}
 												}
 											}
 										}
 									});
 								}
+							}       
+						}
+					});
+				}
+			}	
+		}
+	});
+};
+
+function sendScoreTournament(data, next){
+	var found = false;
+	User.findById(data.consumer.id, function (err, consumer){
+		if(err){
+			return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+		}
+		if(!consumer){
+			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'You cant do this action right now, please try again later' } });
+		} else {
+			if(typeof consumer.game.team !== 'string'){
+				return next({ status: 400, content: { code: 16, description: 'user dont have team', message: 'You dont have a team' } });
+			} else {
+				if(consumer.game.duty !== 'captain'){
+					return next({ status: 403, content: { code: 9, description: 'forbidden, captaions only', message: 'Only captains can send match score' } });
+				} else {
+					Team.findOne({ 'name.original': consumer.game.team }, function (err, team){
+						if(err){
+							return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+						}
+						if(!team){
+							consumer.game.team = null;
+							consumer.game.duty = 'player';
+							consumer.save(function (err){
+								if(err){
+									return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+								} else {
+									return next({ status: 400, content: { code: 16, description: 'user dont have team', message: 'You dont have a team' } });
+								}
+							});	
+						} else {
+							if(team.status !== 'signed'){
+								return next({ status: 400, content: { code: 28, description: 'team status is not "signed"', message: 'Your team is not signed at tournament' } });
+							} else {
+								Tournament.findOne({ 'teams.name': consumer.game.team }, function (err, tournament){
+									if(err){
+										return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+									}
+									if(!tournament){
+										return next({ status: 400, content: { code: 24, description: 'tournament not found', message: 'Your team is not signed at tournament' } });
+									} else {
+										if(tournament.stage !== 'competing'){
+											return next({ status: 400, content: { code: 29, description: 'tournament is not in "competing" stage', message: 'Tournament is not in "competing" stage' } });
+										} else {
+											for(var i=0; i<tournament.resultsFromCaptains.length; i++){
+												if(consumer.game.team === tournament.resultsFromCaptains[i].name){
+													found = true;
+													return next({ status: 400, content: { code: 30, description: 'captain already send match score', message: 'You already send your match score' } });
+												}
+											}
+											if(!found){
+												var score = {};
+												score.name = consumer.game.team;
+												score.won = data.won;
+												tournament.resultsFromCaptains.push(score);
+												tournament.save(function (err){
+													if(err){
+														return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+													} else {
+														return next({ status: 200, content: 'You successfully send your match score' });
+													}
+												});
+											}
+										}
+									}
+								});
 							}       
 						}
 					});
@@ -432,5 +510,6 @@ exports.requests = {
 	edit: editRequests
 };
 exports.tournament = {
-	signin: signinTournament
+	signin: signinTournament,
+	sendScore: sendScoreTournament
 }

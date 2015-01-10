@@ -48,6 +48,10 @@ module.exports = function(app) {
   // code 25-tournament is not in 'signing' stage
   // code 26-team already signed in tournament
   // code 27-team is not full
+  // code 28-team status is not 'signed'
+  // code 29-tournament is not in 'competing' stage
+  // code 30-captain already send match score
+  // code 31-tournament is full
 
   // signin, required params 'username, password'
   app.post('/signin', function (req, res){
@@ -393,6 +397,17 @@ module.exports = function(app) {
       return res.status(400).json({ code: 2, field: 'name', description: 'name is required', message: 'Name cannot be blank' });
     }
     return myTeam.tournament.signin({ consumer: { id: req.user.id }, name: name }, function (data){
+      return res.status(data.status).json(data.content);
+    });
+  });
+
+  // send match score for my team at the tournament i am, required params 'won'
+  app.post('/api/myteam/tournament/score', function (req, res){
+    var won = sanitizeHtml(req.body.won, { allowedTags: [], allowedAttributes: [] });
+    if(typeof req.body.won !== 'boolean'){
+      return res.status(400).json({ code: 2, field: 'won', description: 'won is required', message: 'Won cannot be blank' });
+    }
+    return myTeam.tournament.sendScore({ consumer: { id: req.user.id }, won: won }, function (data){
       return res.status(data.status).json(data.content);
     });
   });

@@ -1,6 +1,39 @@
 <div class="well">
 	<div class="row">
 		<h2>{{user.username}}</h2>
+		{{user}}
 		<p>Ola to your account page. Should contain info, edit, and personal stuff???</p>
+		<div class="well well-sm" ng-controller="TeamCtrl">
+			<div ng-show="!user.team">
+				<h3>You don't have a team</h3>
+				<div class="row">
+					<div class="col-lg-6">
+						<h4>Create new team</h4>
+						<form id="teamForm" ng-submit="createTeam()">
+			              <input ng-model="teamForm.name" type="text" name="team" placeholder="name of the team" />
+			              <button type="submit" class="btn btn-danger">Create a team</button>
+			            </form>
+			            {{teamForm}}
+					</div>
+					<div class="col-lg-6">
+						<h4>Joing existing team</h4>
+						display list of all teams?on click- snippet with team info?
+						<button class="btn">Join selected team from the list?</button>
+					</div>
+				</div>
+			</div>
+
+			<div ng-show="user.team">
+				<h3>Your team: {{user.team}}</h3>
+				<p>Your role in team: {{user.duty}}</p>
+				
+				<div ng-show="user.duty==='captain'">
+					you can manage your team
+					<button class="btn btn-danger" ng-click="disbandTeam()">delete team</button>
+				</div>
+
+			</div>
+		
+		</div>
 	</div>
 </div>

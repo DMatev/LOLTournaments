@@ -52,6 +52,8 @@ module.exports = function(app) {
   // code 29-tournament is not in 'competing' stage
   // code 30-captain already send match score
   // code 31-tournament is full
+  // code 32-tournament is not full or is not in 'signing' stage
+  // code 33-tournament stage is not 'running'
 
   // signin, required params 'username, password'
   app.post('/signin', function (req, res){
@@ -340,6 +342,13 @@ module.exports = function(app) {
     });
   });
 
+  // get my team info
+  app.get('/api/myteam', function (req, res){
+    return teams.getMine({ consumer: { id: req.user.id } }, function (data){
+      return res.status(data.status).json(data.content);
+    });
+  });
+
   // create team, required params 'name'
   app.post('/api/myteam', function (req, res){
     var name = sanitizeHtml(req.body.name, { allowedTags: [], allowedAttributes: [] });
@@ -401,6 +410,7 @@ module.exports = function(app) {
     });
   });
 
+  // NOT WORKING CORRECT
   // send match score for my team at the tournament i am, required params 'won'
   app.post('/api/myteam/tournament/score', function (req, res){
     var won = sanitizeHtml(req.body.won, { allowedTags: [], allowedAttributes: [] });
@@ -443,4 +453,49 @@ module.exports = function(app) {
     });
   });
 
+  // start tournament, required params 'name'
+  app.post('/api/tournaments/start', function (req, res){
+    var name = sanitizeHtml(req.body.name, { allowedTags: [], allowedAttributes: [] });
+    if(typeof req.body.name !== 'string'){
+      return res.status(400).json({ code: 2, field: 'name', description: 'name is required', message: 'Name cannot be blank' });
+    }
+    return tournaments.start({ consumer: { id: req.user.id }, name: name }, function (data){
+      return res.status(data.status).json(data.content);
+    });
+  });
+
+  // set end date of tournament`s current stage, required params 'name, date'
+  app.post('/api/tournaments/stage/date', function (req, res){
+    var name = sanitizeHtml(req.body.name, { allowedTags: [], allowedAttributes: [] });
+    if(typeof req.body.name !== 'string'){
+      return res.status(400).json({ code: 2, field: 'name', description: 'name is required', message: 'Name cannot be blank' });
+    }
+    if(typeof req.body.date !== 'string'){
+      return res.status(400).json({ code: 2, field: 'date', description: 'date is required', message: 'date cannot be blank' });
+    }
+    if(!validateDate(req.body.date)){
+      return res.status(400).json({ code: 3, field: 'date', description: 'date validation is wrong', message: 'Date must be set at this type "dd-mm-yyyy"' }); 
+    }
+    return tournaments.stage.setEndDate({ consumer: { id: req.user.id }, name: name, date: validateDate(req.body.date) }, function (data){
+      return res.status(data.status).json(data.content);
+    });
+  });
+
+  //NOT TESTED
+  // finish current stage of tournament and go to next one, required params 'name'
+  app.post('/api/tournaments/stage/end', function (req, res){
+    var name = sanitizeHtml(req.body.name, { allowedTags: [], allowedAttributes: [] });
+    if(typeof req.body.name !== 'string'){
+      return res.status(400).json({ code: 2, field: 'name', description: 'name is required', message: 'Name cannot be blank' });
+    }
+    return tournaments.stage.setNextStage({ consumer: { id: req.user.id }, name: name }, function (data){
+      return res.status(data.status).json(data.content);
+    });
+  });
+
 };
+
+function validateDate(elementValue){
+  var m = elementValue.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+  return (m) ? new Date(m[3], m[2]-1, m[1]) : null;  
+}

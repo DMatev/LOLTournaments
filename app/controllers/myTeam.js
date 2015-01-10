@@ -378,7 +378,7 @@ function signinTournament(data, next){
 										if(!tournament){
 											return next({ status: 400, content: { code: 24, description: 'tournament not found', message: 'Tournament not found' } });
 										} else {
-											if(tournament.stage !== 'signing'){
+											if(!tournament.stage.isSigningOpen){
 												return next({ status: 400, content: { code: 25, description: 'tournament is not in "signing" stage', message: 'Tournament is not in "signing" stage' } });
 											} else {
 												for(var i=0; i<tournament.teams.length; i++){

@@ -18,10 +18,9 @@
 					<div class="col-lg-6">
 						<h4>Joing existing team</h4>
 						display list of all teams?on click- snippet with team info?
-						
 						<div class="list-group">
 							<label 
-							ng-class="{'list-group-item':selectedTeam!=$index,'list-group-item active':selectedTeam===$index}" 
+							ng-class="{'list-group-item':selectedTeam!=$index,'list-group-item active':selectedTeam===$index,'list-group-item disabled':team.requests.indexOf(user.username)>-1}" 
 							ng-model="selectedTeam"
 							ng-click="selectTeam($index)"
 							ng-repeat="team in teamList">
@@ -40,15 +39,19 @@
 				<h3>Your team: {{user.team}}</h3>
 				<p>Your role in team: {{user.duty}}</p>
 				
+
+
+				<!--CAPTAIN STUFF can be in file or even state-->
 				<div ng-show="user.duty==='captain'">
 					you can manage your team
 					<div class="row">
 						<div class="col-lg-6">
 							<h4>team members list for <u>{{user.team}}</u></h4>
-							<button ng-click="getTeamMembers()">get team list(cuz resolve bugs/needs fix)</button>
 							<div class="list-group col-lg-6">
 								<label class="list-group-item" ng-repeat="member in teamMemberList">{{member}}
+								<span ng-click="kickMember(member)" class="glyphicon glyphicon-remove"></span>
 								</label>
+								{{teamMemberList}}
 							</div>
 						</div>
 						<div class="col-lg-6">

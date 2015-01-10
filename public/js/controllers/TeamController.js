@@ -8,9 +8,6 @@ angular.module('TeamController',[])
 		$scope.requestsList={};
 		$scope.selectedTeam;
 		
-		$scope.selectTeam=function(id){
-			$scope.selectedTeam=id;
-		};
 
 		function getUserInfo(){
 			$http.get('/api/userinfo')
@@ -50,9 +47,19 @@ angular.module('TeamController',[])
 				});
 		};
 
+		$scope.selectTeam=function(id){
+			if($scope.teamList[id].requests.indexOf($scope.user.username)>-1){
+				alert('You have already sent request to that team');
+			}else{
+				$scope.selectedTeam=id;
+			}
+		};
+
 		$scope.joinTeam=function(){
 			$http.post('/api/teams/request',{name:$scope.teamList[$scope.selectedTeam].name.original})
 				.success(function(data){
+					delete $scope.selectedTeam;
+					getAllTeams();
 					console.log(data);
 				})
 				.error(function(data){
@@ -68,6 +75,8 @@ angular.module('TeamController',[])
 			}
 			$http.put('/api/myteam/requests',{name:name,approved:approved})
 				.success(function(data){
+					getTeamMembers();
+					getAllRequests();
 					console.log(data);
 				})
 				.error(function(data){
@@ -80,17 +89,18 @@ angular.module('TeamController',[])
 		$scope.test=function(username){
 			console.log(username);
 		};
-		$scope.getTeamMembers=function(){
-			$http.get('/api/teams/name/'+$scope.user.team)
+		
+		$scope.kickMember=function(member){
+			$http.delete('/api/myteam/member/'+member)
 				.success(function(data){
-					$scope.teamMemberList=data.players;
+					getTeamMembers();
 					console.log(data);
 				})
 				.error(function(data){
 					console.log(data);
 				});
-		}
-		//getTeamMembers();
+		};
+		//AT start-get all teams,get my team list members,get request for my team
 
 		//GET ALL TEAMS TO MAKE A LIST
 		function getAllTeams(){
@@ -103,8 +113,22 @@ angular.module('TeamController',[])
 					console.log(data);
 				});
 		}
-
 		getAllTeams();
+
+		//GET TEAM MEMBERS
+		function getTeamMembers(){
+			$http.get('/api/myteam')
+			//$http.get('/api/teams/name/'+$scope.user.team)
+				.success(function(data){
+					$scope.teamMemberList=data.players;
+					console.log(data);
+				})
+				.error(function(data){
+					console.log(data);
+				});
+		};
+		getTeamMembers();
+
 		//GET ALL REQUESTS TO MY TEAM
 		function getAllRequests(){
 			$http.get('/api/myteam/requests')

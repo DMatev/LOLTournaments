@@ -17,7 +17,7 @@ function getAllNews(data, next){
 			return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 		}
 		if(!consumer){
-			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'User not found' } });
+			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'You cant do this action right now, please try again later' } });
 		} else {
 			if(consumer.account.role !== 'admin'){
 				return next({ status: 403, content: { code: 8, description: 'forbidden, admins only', message: 'Only admins can view all news' } });	
@@ -39,7 +39,7 @@ function getByIdNews(data, next){
 			return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 		}
 		if(!consumer){
-			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'User not found' } });
+			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'You cant do this action right now, please try again later' } });
 		} else {
 			if(consumer.account.role !== 'admin'){
 				return next({ status: 403, content: { code: 8, description: 'forbidden, admins only', message: 'Only admins can view all news' } });	
@@ -61,10 +61,10 @@ function publishNews(data, next){
 			return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 		}
 		if(!consumer){
-			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'User not found' } });
+			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'You cant do this action right now, please try again later' } });
 		} else {
 			if(consumer.account.role !== 'admin'){
-				return next({ status: 403, content: { code: 8, description: 'forbidden, admins only', message: 'Only admins can post news' } });	
+				return next({ status: 403, content: { code: 8, description: 'forbidden, admins only', message: 'Only admins can create news' } });	
 			} else {
 				var news = new News();
 				news.title = data.news.title;
@@ -93,7 +93,7 @@ function editNews(data, next){
 			return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 		}
 		if(!consumer){
-			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'User not found' } });
+			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'You cant do this action right now, please try again later' } });
 		} else {
 			if(consumer.account.role !== 'admin'){
 				return next({ status: 403, content: { code: 8, description: 'forbidden, admins only', message: 'Only admins can edit news' } });	
@@ -140,7 +140,7 @@ function removeNews(data, next){
 			return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 		}
 		if(!consumer){
-			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'User not found' } });
+			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'You cant do this action right now, please try again later' } });
 		} else {
 			if(consumer.account.role !== 'admin'){
 				return next({ status: 403, content: { code: 8, description: 'forbidden, admins only', message: 'Only admins can remove news' } });	
@@ -167,7 +167,7 @@ function makeComment(data, next){
 			return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 		}
 		if(!consumer){
-			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'User not found' } });
+			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'You cant do this action right now, please try again later' } });
 		} else {
 			News.findById(data.news.id, function (err, news){
 				if(err){
@@ -201,7 +201,7 @@ function removeComment(data, next){
 			return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 		}
 		if(!consumer){
-			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'User not found' } });
+			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'You cant do this action right now, please try again later' } });
 		} else {
 			if(consumer.account.role !== 'admin'){
 				return next({ status: 403, content: { code: 8, description: 'forbidden, admins only', message: 'Only admins can remove comments' } });	

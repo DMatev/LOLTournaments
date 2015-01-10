@@ -7,7 +7,7 @@ function dismiss(data, next){
 			return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 		}
 		if(!consumer){
-			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'User not found' } });
+			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'You cant do this action right now, please try again later' } });
 		} else {
 			if(typeof consumer.game.team !== 'string'){
 				return next({ status: 400, content: { code: 16, description: 'user dont have team', message: 'You dont have a team' } });
@@ -20,7 +20,16 @@ function dismiss(data, next){
 							return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 						}
 						if(!team){
-							return next({ status: 400, content: { code: 16, description: 'user dont have team', message: 'You dont have a team' } });
+							// fixing the bug
+							consumer.game.team = null;
+							consumer.game.duty = 'player';
+							consumer.save(function (err){
+								if(err){
+									return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+								} else {
+									return next({ status: 400, content: { code: 16, description: 'user dont have team', message: 'You dont have a team' } });
+								}
+							});
 						} else {
 							if(team.status !== 'free'){
 								return next({ status: 400, content: { code: 17, description: 'team status is not "free"', message: 'Your team status is not "free"' } });
@@ -55,7 +64,7 @@ function create(data, next){
 			return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 		}
 		if(!consumer){
-			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'User not found' } });
+			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'You cant do this action right now, please try again later' } });
 		} else {
 			if(typeof consumer.game.team === 'string'){
 				return next({ status: 400, content: { code: 18, description: 'user already have team', message: 'You already have a team' } });
@@ -102,7 +111,7 @@ function getRequests(data, next){
 			return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 		}
 		if(!consumer){
-			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'User not found' } });
+			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'You cant do this action right now, please try again later' } });
 		} else {
 			if(typeof consumer.game.team !== 'string'){
 				return next({ status: 400, content: { code: 16, description: 'user dont have team', message: 'You dont have a team' } });
@@ -115,7 +124,15 @@ function getRequests(data, next){
 							return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 						}
 						if(!team){
-							return next({ status: 400, content: { code: 16, description: 'user dont have team', message: 'You dont have a team' } });
+							consumer.game.team = null;
+							consumer.game.duty = 'player';
+							consumer.save(function (err){
+								if(err){
+									return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+								} else {
+									return next({ status: 400, content: { code: 16, description: 'user dont have team', message: 'You dont have a team' } });
+								}
+							});
 						} else {
 							return next({ status: 200, content: team.requests });
 						}
@@ -136,7 +153,7 @@ function editRequests(data, next){
 			return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 		}
 		if(!consumer){
-			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'User not found' } });
+			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'You cant do this action right now, please try again later' } });
 		} else {
 			if(typeof consumer.game.team !== 'string'){
 				return next({ status: 400, content: { code: 16, description: 'user dont have team', message: 'You dont have a team' } });
@@ -149,7 +166,15 @@ function editRequests(data, next){
 							return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 						}
 						if(!team){
-							return next({ status: 500, content: { code: 14, description: 'team not found', message: 'Team not found' } });
+							consumer.game.team = null;
+							consumer.game.duty = 'player';
+							consumer.save(function (err){
+								if(err){
+									return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+								} else {
+									return next({ status: 400, content: { code: 16, description: 'user dont have team', message: 'You dont have a team' } });
+								}
+							});
 						} else {
 							if(team.status !== 'free'){
 								return next({ status: 400, content: { code: 17, description: 'team status is not "free"', message: 'Your team status is not "free"' } });
@@ -164,7 +189,14 @@ function editRequests(data, next){
 													return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 												}
 												if(!user){
-													return next({ status: 400, content: { code: 10, description: 'user not found', message: 'User not found' } });
+													team.requests.splice(index, 1);
+													team.save(function (err){
+														if(err){
+															return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+														} else {
+															return next({ status: 400, content: { code: 10, description: 'user not found', message: 'User not found' } });
+														}
+													});
 												} else {
 													if(typeof user.game.team === 'string'){
 														return next({ status: 400, content: { code: 18, description: 'user already have team', message: 'User already have a team' } });
@@ -229,7 +261,7 @@ function kickMember(data, next){
 			return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 		}
 		if(!consumer){
-			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'User not found' } });
+			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'You cant do this action right now, please try again later' } });
 		} else {
 			if(typeof consumer.game.team !== 'string'){
 				return next({ status: 400, content: { code: 16, description: 'user dont have team', message: 'You dont have a team' } });
@@ -242,7 +274,15 @@ function kickMember(data, next){
 							return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 						}
 						if(!team){
-							return next({ status: 500, content: { code: 14, description: 'team not found', message: 'Team not found' } });
+							consumer.game.team = null;
+							consumer.game.duty = 'player';
+							consumer.save(function (err){
+								if(err){
+									return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+								} else {
+									return next({ status: 400, content: { code: 16, description: 'user dont have team', message: 'You dont have a team' } });
+								}
+							});	
 						} else {
 							if(team.status !== 'free'){
 								return next({ status: 400, content: { code: 17, description: 'team status is not "free"', message: 'Your team status is not "free"' } });
@@ -258,15 +298,13 @@ function kickMember(data, next){
 												if(err){
 													return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 												}
-												if(!user){
-													return next({ status: 400, content: { code: 10, description: 'user not found', message: 'User not found' } });
-												} else {
-													team.players.splice(index, 1);
-													team.save(function (err){
-														if(err){
-															return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
-														} else {
-															user.game.team = undefined;
+												team.players.splice(index, 1);
+												team.save(function (err){
+													if(err){
+														return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+													} else {
+														if(user){
+															user.game.team = null;
 															user.game.duty = 'player';
 															user.save(function (err){
 																if(err){
@@ -275,9 +313,11 @@ function kickMember(data, next){
 																	return next({ status: 200, content: 'You successfully kick player from your team' });
 																}
 															});
+														} else {
+															return next({ status: 200, content: 'You successfully kick player from your team' });
 														}
-													});
-												}
+													}
+												});
 											});
 										}
 									}

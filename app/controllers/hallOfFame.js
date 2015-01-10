@@ -16,7 +16,7 @@ function publish(data, next){
 			return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 		}
 		if(!consumer){
-			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'User not found' } });
+			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'You cant do this action right now, please try again later' } });
 		} else {
 			if(consumer.account.role !== 'admin'){
 				return next({ status: 403, content: { code: 8, description: 'forbidden, admins only', message: 'Only admins can post records for Hall Of Fame' } });	

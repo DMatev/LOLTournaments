@@ -9,8 +9,17 @@ angular.module('appRoutes',[])
           templateUrl:'views/main.html'
         })
         .state('account',{
+          /*resolve:{
+            'U':['$http',function($http){
+              return $http.get('/api/userinfo')
+                .then(function(data){
+                  console.log(data.data);
+                  return data.data
+                });
+            }]
+          },*/
           url:'/account',
-          templateUrl:'views/account.html'
+          templateUrl:'views/account.html',
         });
 
 

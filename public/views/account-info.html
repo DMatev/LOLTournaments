@@ -18,7 +18,20 @@
 					<div class="col-lg-6">
 						<h4>Joing existing team</h4>
 						display list of all teams?on click- snippet with team info?
-						<button class="btn">Join selected team from the list?</button>
+						
+						<div class="list-group">
+							<label 
+							ng-class="{'list-group-item':selectedTeam!=$index,'list-group-item active':selectedTeam===$index}" 
+							ng-model="selectedTeam"
+							ng-click="selectTeam($index)"
+							ng-repeat="team in teamList">
+								{{team.name.original}}
+								<span class="badge">{{team.players.length}}</span>
+							</label>
+						</div>
+						{{teamList}}
+						{{selectedTeam}}
+						<button ng-show="selectedTeam>=0" class="btn" ng-click="joinTeam()">Join selected team from the list?</button>
 					</div>
 				</div>
 			</div>
@@ -29,6 +42,26 @@
 				
 				<div ng-show="user.duty==='captain'">
 					you can manage your team
+					<div class="row">
+						<div class="col-lg-6">
+							<h4>team members list for <u>{{user.team}}</u></h4>
+							<button ng-click="getTeamMembers()">get team list(cuz resolve bugs/needs fix)</button>
+							<div class="list-group col-lg-6">
+								<label class="list-group-item" ng-repeat="member in teamMemberList">{{member}}
+								</label>
+							</div>
+						</div>
+						<div class="col-lg-6">
+							<h4>team requests list?</h4>
+							<div class="list-group col-lg-6">
+								<label class="list-group-item" ng-repeat="request in requestsList">{{request}}
+								<span ng-click="handleTeamRequest(request,'true')" class="glyphicon glyphicon-thumbs-up"></span>
+								<span ng-click="handleTeamRequest(request,'false')" class="glyphicon glyphicon-thumbs-down"></span>
+								</label>
+							</div>
+
+						</div>
+					</div>
 					<button class="btn btn-danger" ng-click="disbandTeam()">delete team</button>
 				</div>
 

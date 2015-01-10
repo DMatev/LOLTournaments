@@ -1,4 +1,15 @@
-<h1>Home</h1>
-<p>
-	<a href="#/admin">Administration</a>
-</p>
+<!--STRANGE STUFF koito dido iska-->      
+ <div class="container">
+	<h1>Shitty homepage</h1>
+	<div class="jumbotron" ng-hide="isAuthenticated">
+       <h2>/account or icon in upper right corner to login or facepalm</h2>
+    </div>
+
+    <div class="jumbotron" ng-show="isAuthenticated">
+        <div class="row">
+        	 <p>{{welcome}}</p>
+        	<button class="btn btn-primary" ng-click="sendAwesomeAjax()">awesome ajax</button>
+        	<div>{{message}}</div>
+        </div>
+    </div>
+</div>   

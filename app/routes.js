@@ -169,7 +169,7 @@ module.exports = function(app) {
     var title = sanitizeHtml(req.body.title, { allowedTags: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'b', 'i', 'strong', 'em', 'strike'], allowedAttributes: [] });
     var content = sanitizeHtml(req.body.content, { allowedTags: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'b', 'i', 'strong', 'em', 'strike'], allowedAttributes: [] });
     var author = sanitizeHtml(req.body.author, { allowedTags: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'b', 'i', 'strong', 'em', 'strike'], allowedAttributes: [] });
-    var news = { };
+    var newNews = { };
     if(typeof req.body.title !== 'string'){
       return res.status(400).json({ code: 2, field: 'title', description: 'title is required', message: 'Title cannot be blank' });
     }
@@ -177,14 +177,14 @@ module.exports = function(app) {
       return res.status(400).json({ code: 2, field: 'content', description: 'content is required', message: 'Content cannot be blank' });
     }
     if(typeof req.body.author === 'string'){
-      news.author = author;
+      newNews.author = author;
     }
     if(typeof req.body.isVisible === 'boolean'){
-      news.isVisible = req.body.isVisible;
+      newNews.isVisible = req.body.isVisible;
     }
-    news.title = title;
-    news.content = content;
-    return news.publish({ consumer: { id: req.user.id }, news: news }, function (data){
+    newNews.title = title;
+    newNews.content = content;
+    return news.publish({ consumer: { id: req.user.id }, news: newNews }, function (data){
       return res.status(data.status).json(data.content);
     });
   });

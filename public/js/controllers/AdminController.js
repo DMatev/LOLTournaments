@@ -6,6 +6,16 @@ angular.module('AdminController',[])
 	  $scope.tournamentList={};
 	  $scope.newsForm={};
 
+	  $scope.hallOfFameEditForm={
+	  	visible: false,
+	  	selected: null
+	  };
+
+	  $scope.hallOfFameForm={};
+	  $scope.hallOfFameList={};
+
+
+
 	  $scope.createNews=function(){
 	  	console.log($scope.newsForm);
 	  	$http.post('/api/news',{title:$scope.newsForm.title,content:$scope.newsForm.content})
@@ -16,6 +26,45 @@ angular.module('AdminController',[])
 	  			console.log(data);
 	  		});
 	  };
+
+	  $scope.createHallOfFameRecord=function(){
+	  	console.log($scope.hallOfFameForm);
+	  	$http.post('/api/halloffame',{team:$scope.hallOfFameForm.team,tournament:$scope.hallOfFameForm.tournament})
+	  		.success(function(data){
+	  			console.log(data);
+	  		})
+	  		.error(function(data){
+	  			console.log(data);
+	  		});
+	  };
+
+	  $scope.deleteHallOfFameRecord=function(id){
+	  	$http.delete('/api/halloffame/'+id)
+	  		.success(function(data){
+	  			console.log(data);
+	  		})
+	  		.error(function(data){
+	  			console.log(data);
+	  		});
+	  };
+		$scope.editHallOfFame=function(record){
+			$scope.hallOfFameEditForm.visible=true;
+			$scope.hallOfFameEditForm.selected=record._id;
+			$scope.hallOfFameEditForm.team=record.team;
+			$scope.hallOfFameEditForm.tournament=record.tournament;
+		};
+
+		$scope.editHallOfFameRecord=function(){
+			console.log('opa');
+		  	$http.put('/api/halloffame/'+$scope.hallOfFameEditForm.selected,
+		  		{team:$scope.hallOfFameEditForm.team,tournament:$scope.hallOfFameEditForm.tournament})
+		  		.success(function(data){
+		  			console.log(data);
+		  		})
+		  		.error(function(data){
+		  			console.log(data);
+		  		});
+	  	};
 
 	  $scope.createTournament=function(){
 	  	$http.post('/api/tournaments',{
@@ -49,6 +98,18 @@ angular.module('AdminController',[])
 				});
 		}
 		getAllTournaments();
+
+		function getHallOfFame(){
+			$http.get('/halloffame')
+				.success(function(data){
+					$scope.hallOfFameList=data;
+					console.log(data);
+				})
+				.error(function(data){
+					console.log(data);
+				});
+		}
+		getHallOfFame();
 	 
 	})
 	.controller('accordionTournaments',['$scope','$http',function($scope,$http){

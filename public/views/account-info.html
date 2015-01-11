@@ -113,13 +113,46 @@
 				<div class="col-lg-12">
 					<h4>future news control</h4>
 					<form id="newsForm" ng-submit="createNews()">
-			              <input ng-model="newsForm.title" type="text" name="title" placeholder="title of the news" />
+			        	<input ng-model="newsForm.title" type="text" name="title" placeholder="title of the news" />
+			            <textarea class="form-control" rows="3" ng-model="newsForm.content"></textarea>
+			            <button type="submit" class="btn btn-danger">Post news</button>
+			        </form>
+			        {{newsForm}}
+				</div>
+			</div>
 
-			             <textarea class="form-control" rows="3" ng-model="newsForm.content"></textarea>
 
-			              <button type="submit" class="btn btn-danger">Post news</button>
-			            </form>
-			           {{newsForm}}
+
+			<!--MESS WITH Hall Of Fame-->
+			<div class="row">
+				<div class="col-lg-12">
+					<h4>Hall Of Fame</h4>
+						<table class="table table-striped">
+							<th>Team</th><th>Tournament</th><th>Edit</th><th>Remove</th>
+							<tr ng-repeat="record in hallOfFameList">
+							    <td class="col-md-5">{{record.team}}</td>
+							    <td class="col-md-5">{{record.tournament}}</td>
+							    <td class="col-md-1"><span ng-click="editHallOfFame(record)" class="glyphicon glyphicon-pencil"></span></td>
+							    <td class="col-md-1"><span ng-click="deleteHallOfFameRecord(record._id)" class="glyphicon glyphicon-remove"></span></td>
+							</tr>						
+				      	</table>
+
+				    <div ng-show="hallOfFameEditForm.visible">
+				    	<h4>edit record</h4>
+				    	<form id="hallOfFameEditForm" ng-submit="editHallOfFameRecord()">
+			            <input ng-model="hallOfFameEditForm.team" type="text" name="team" placeholder="name of the team" />
+						<input ng-model="hallOfFameEditForm.tournament" type="text" name="tournament" placeholder="name of the tournament" />
+			            <button type="submit" class="btn btn-danger">Edit record</button>
+				        </form>
+				    </div>
+
+				    <h4>create record</h4>
+					<form id="hallOfFameForm" ng-submit="createHallOfFameRecord()">
+			            <input ng-model="hallOfFameForm.team" type="text" name="team" placeholder="name of the team" />
+						<input ng-model="hallOfFameForm.tournament" type="text" name="tournament" placeholder="name of the tournament" />
+			            <button type="submit" class="btn btn-danger">Create record</button>
+			        </form>
+			        
 				</div>
 			</div>
 

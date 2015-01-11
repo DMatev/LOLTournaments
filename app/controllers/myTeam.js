@@ -2,7 +2,9 @@ var User = require('../models/user');
 var Team = require('../models/team');
 var Tournament = require('../models/tournament');
 
-function dismiss(data, next){
+function leave(data, next){
+	var found = false;
+	var index;
 	User.findById(data.consumer.id, function (err, consumer){
 		if(err){
 			return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
@@ -14,7 +16,56 @@ function dismiss(data, next){
 				return next({ status: 400, content: { code: 16, description: 'user dont have team', message: 'You dont have a team' } });
 			} else {
 				if(consumer.game.duty !== 'captain'){
-					return next({ status: 403, content: { code: 9, description: 'forbidden, captaions only', message: 'Only captains can dismiss teams' } });	
+					//return next({ status: 403, content: { code: 9, description: 'forbidden, captaions only', message: 'Only captains can dismiss teams' } });	
+					Team.findOne({ 'name.original': consumer.game.team }, function (err, team){
+						if(err){
+							return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+						}
+						if(!team){
+							// fixing the bug
+							consumer.game.team = null;
+							consumer.game.duty = 'player';
+							consumer.save(function (err){
+								if(err){
+									return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+								} else {
+									return next({ status: 400, content: { code: 16, description: 'user dont have team', message: 'You dont have a team' } });
+								}
+							});
+						} else {
+							if(team.status !== 'free'){
+								return next({ status: 400, content: { code: 17, description: 'team status is not "free"', message: 'Your team status is not "free"' } });
+							} else {
+								consumer.game.team = null;
+								consumer.game.duty = 'player';
+								consumer.save(function (err){
+									if(err){
+										return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+									} else {
+										for(var i=0; i<team.players.length; i++){
+											if(consumer.account.username.original === team.players[i]){
+												console.log('found');
+												found = true;
+												index = i;
+												i = team.players.length;
+												team.players.splice(index,1);
+												team.save(function (err){
+													if(err){
+														return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+													} else {
+														return next({ status: 200, content: 'You successfully leave your team' });
+													}
+												});
+											}
+										}
+										if(!found){
+											return next({ status: 200, content: 'You successfully leave your team' });
+										}
+									}
+								});
+							}
+						}
+					});
 				} else {
 					Team.findOne({ 'name.original': consumer.game.team }, function (err, team){
 						if(err){
@@ -512,7 +563,7 @@ function sendScoreTournament(data, next){
 	});
 };
 
-exports.dismiss = dismiss;
+exports.leave = leave;
 exports.create = create;
 exports.kick = kickMember;
 exports.requests = {

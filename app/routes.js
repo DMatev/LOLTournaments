@@ -56,6 +56,7 @@ module.exports = function(app) {
   // code 33-tournament stage is not 'running'
   // code 34-not all tournament matches are finished correctly
   // code 35-team not found in tournament`s stage
+  // code 36-tournament`s stage is not the last stage
 
   // signin, required params 'username, password'
   app.post('/signin', function (req, res){
@@ -365,9 +366,9 @@ module.exports = function(app) {
     });
   });
 
-  // dismiss my team
+  // leave my team (if i am captain - dissmiss it)
   app.delete('/api/myteam', function (req, res){
-    return myTeam.dismiss({ consumer: { id: req.user.id } }, function (data){
+    return myTeam.leave({ consumer: { id: req.user.id } }, function (data){
       return res.status(data.status).json(data.content);
     });
   });
@@ -465,6 +466,17 @@ module.exports = function(app) {
     });
   });
 
+  // end tournament, required params 'name'
+  app.post('/api/tournaments/end', function (req, res){
+    var name = sanitizeHtml(req.body.name, { allowedTags: [], allowedAttributes: [] });
+    if(typeof req.body.name !== 'string'){
+      return res.status(400).json({ code: 2, field: 'name', description: 'name is required', message: 'Name cannot be blank' });
+    }
+    return tournaments.end({ consumer: { id: req.user.id }, name: name }, function (data){
+      return res.status(data.status).json(data.content);
+    });
+  });
+
   // set end date of tournament`s current stage, required params 'name, date'
   app.post('/api/tournaments/stage/date', function (req, res){
     var name = sanitizeHtml(req.body.name, { allowedTags: [], allowedAttributes: [] });
@@ -482,7 +494,6 @@ module.exports = function(app) {
     });
   });
 
-  //NOT TESTED
   // finish current stage of tournament and go to next one, required params 'name'
   app.post('/api/tournaments/stage/end', function (req, res){
     var name = sanitizeHtml(req.body.name, { allowedTags: [], allowedAttributes: [] });

@@ -55,6 +55,22 @@ tournamentSchema.methods.makeFirstStage = function (next){
     }
 };
 
+tournamentSchema.methods.finish = function (next){
+    if(!this.stage.isRunning){
+        return next(1); //stage is not 'running'
+    } else {
+        if(this.currentStage.matches.length !== 1){
+            return next(2); //current tournament stage is not the last stage
+        }
+        if(this.currentStage.matches[0].winner === 2){
+            return next(3); //the last match is not decided
+        }
+        this.stage.isRunning = false;
+        this.stage.isOver = true;
+        return next(null);
+    }
+};
+
 tournamentSchema.methods.moveCurrentStageToHistory = function (next){
     var pool = [], found = false, history = {};
     if(this.stage.isRunning){
@@ -85,7 +101,7 @@ tournamentSchema.methods.moveCurrentStageToHistory = function (next){
                 for(var i=0; i<pool.length; i=i+2){
                     this.currentStage.matches.push({ team1: pool[i], team2: pool[i+1] })
                 }
-                return next(null, history, this.currentStage, true, false);
+                return next(null, history, this.currentStage);
             } else {
                 return next(3); //finishing left
             }

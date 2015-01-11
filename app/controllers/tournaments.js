@@ -98,7 +98,12 @@ function startFirstStage(data, next){
 					} else {
 						tournament.makeFirstStage(function (err){
 							if(err){
-								return next({ status: 400, content: { code: 32, description: 'tournament is not full or is not in "signing" stage', message: 'You cant do this action right now, please try again later' } });
+								if(err === 1){
+									return next({ status: 400, content: { code: 25, description: 'tournament is not in "signing" stage', message: 'Tournament is not in "signing" stage' } });
+								}
+								if(err === 2){
+									return next({ status: 400, content: { code: 32, description: 'tournament is not full', message: 'Tournament is not full' } });
+								}
 							} else {
 								tournament.save(function (err){
 									if(err){
@@ -109,7 +114,6 @@ function startFirstStage(data, next){
 								});
 							}
 						});
-						
 					}
 				});
 			}
@@ -258,6 +262,91 @@ function finish(data, next){
 	});
 };
 
+function tryResolveMatches(data, next){
+	User.findById(data.consumer.id, function (err, consumer){
+		if(err){
+			return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+		}
+		if(!consumer){
+			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'You cant do this action right now, please try again later' } });
+		} else {
+			if(consumer.account.role !== 'admin'){
+				return next({ status: 403, content: { code: 8, description: 'forbidden, admins only', message: 'Only admins can try to resolve matches from current stage of tournament' } });	
+			} else {
+				Tournament.findOne({ 'name.lowerCase': data.name.toLowerCase() }, function (err, tournament){
+					if(err){
+						return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+					}
+					if(!tournament){
+						return next({ status: 400, content: { code: 24, description: 'tournament not found', message: 'Tournament not found' } });
+					} else {
+						tournament.tryResolveMatches(function(err, fixList){
+							if(err){
+								return next({ status: 400, content: { code: 33, description: 'tournament stage is not "running"', message: 'Torunament stage is not "running"' } });
+							} else {
+								tournament.save(function (er){
+									if(err){
+										return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+									} else {
+										if(!fixList){
+											return next({ status: 200, content: 'You successfully resolve all matches of the current tournament`s stage' });
+										} else {
+											return next({ status: 400, content: { code: 34, description: 'uncorrect matches', message: 'Not all matches are finished correctly' } });
+										}
+									}
+								});
+							}
+						});
+					}
+				});
+			}
+		}
+	});
+};
+
+function resolveMatch(data, next){
+	var found = false;
+	User.findById(data.consumer.id, function (err, consumer){
+		if(err){
+			return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+		}
+		if(!consumer){
+			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'You cant do this action right now, please try again later' } });
+		} else {
+			if(consumer.account.role !== 'admin'){
+				return next({ status: 403, content: { code: 8, description: 'forbidden, admins only', message: 'Only admins can resolve matches' } });	
+			} else {
+				Tournament.findOne({ 'name.lowerCase': data.name.toLowerCase() }, function (err, tournament){
+					if(err){
+						return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+					}
+					if(!tournament){
+						return next({ status: 400, content: { code: 24, description: 'tournament not found', message: 'Tournament not found' } });
+					} else {
+						for(var i=0; i<tournament.currentStage.matches.length; i++){
+							if(data.match.id == tournament.currentStage.matches[i]._id){
+								tournament.currentStage.matches[i].winner = data.match.winner;
+								found = true;
+								i = tournament.currentStage.matches.length;
+								tournament.save(function (err){
+									if(err){
+										return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+									} else {
+										return next({ status: 200, content: 'You successfully edit match' });
+									}
+								});
+							}
+						}
+						if(!found){
+							return next({ status: 400, content: { code: 37, description: 'match not found', message: 'Match not found' } });
+						}
+					}
+				});
+			}
+		}
+	});
+};
+
 exports.getAll = getAll;
 exports.getByName = getByName;
 exports.create = create;
@@ -265,5 +354,7 @@ exports.start = startFirstStage;
 exports.end = finish;
 exports.stage = {
 	setEndDate: setCurrentStageEndDate,
-	setNextStage: moveCurrentStageToHistory
+	setNextStage: moveCurrentStageToHistory,
+	tryResolveMatches: tryResolveMatches,
+	resolveMatch: resolveMatch
 };

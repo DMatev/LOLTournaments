@@ -52,11 +52,12 @@ module.exports = function(app) {
   // code 29-tournament is not in 'competing' stage
   // code 30-captain already send match score
   // code 31-tournament is full
-  // code 32-tournament is not full or is not in 'signing' stage
+  // code 32-tournament is not full
   // code 33-tournament stage is not 'running'
   // code 34-not all tournament matches are finished correctly
   // code 35-team not found in tournament`s stage
   // code 36-tournament`s stage is not the last stage
+  // code 37-match not found
 
   // signin, required params 'username, password'
   app.post('/signin', function (req, res){
@@ -470,36 +471,28 @@ module.exports = function(app) {
     });
   });
 
-  // start tournament, required params 'name'
-  app.post('/api/tournaments/start', function (req, res){
-    var name = sanitizeHtml(req.body.name, { allowedTags: [], allowedAttributes: [] });
-    if(typeof req.body.name !== 'string'){
-      return res.status(400).json({ code: 2, field: 'name', description: 'name is required', message: 'Name cannot be blank' });
-    }
+  // start tournament
+  app.put('/api/tournaments/name/:name/start', function (req, res){
+    var name = sanitizeHtml(req.params.name, { allowedTags: [], allowedAttributes: [] });
     return tournaments.start({ consumer: { id: req.user.id }, name: name }, function (data){
       return res.status(data.status).json(data.content);
     });
   });
 
-  // end tournament, required params 'name'
-  app.post('/api/tournaments/end', function (req, res){
-    var name = sanitizeHtml(req.body.name, { allowedTags: [], allowedAttributes: [] });
-    if(typeof req.body.name !== 'string'){
-      return res.status(400).json({ code: 2, field: 'name', description: 'name is required', message: 'Name cannot be blank' });
-    }
+  // end tournament
+  app.put('/api/tournaments/name/:name/end', function (req, res){
+    var name = sanitizeHtml(req.params.name, { allowedTags: [], allowedAttributes: [] });
     return tournaments.end({ consumer: { id: req.user.id }, name: name }, function (data){
       return res.status(data.status).json(data.content);
     });
   });
 
-  // set end date of tournament`s current stage, required params 'name, date'
-  app.post('/api/tournaments/stage/date', function (req, res){
-    var name = sanitizeHtml(req.body.name, { allowedTags: [], allowedAttributes: [] });
-    if(typeof req.body.name !== 'string'){
-      return res.status(400).json({ code: 2, field: 'name', description: 'name is required', message: 'Name cannot be blank' });
-    }
+  // need some fixing
+  // set end date of tournament`s current stage, required params 'date'
+  app.put('/api/tournaments/name/:name/stage/date', function (req, res){
+    var name = sanitizeHtml(req.params.name, { allowedTags: [], allowedAttributes: [] });
     if(typeof req.body.date !== 'string'){
-      return res.status(400).json({ code: 2, field: 'date', description: 'date is required', message: 'date cannot be blank' });
+      return res.status(400).json({ code: 2, field: 'date', description: 'date is required', message: 'Date cannot be blank' });
     }
     if(!validateDate(req.body.date)){
       return res.status(400).json({ code: 3, field: 'date', description: 'date validation is wrong', message: 'Date must be set at this type "dd-mm-yyyy"' }); 
@@ -509,27 +502,41 @@ module.exports = function(app) {
     });
   });
 
-  // finish current stage of tournament and go to next one, required params 'name'
-  app.post('/api/tournaments/stage/end', function (req, res){
-    var name = sanitizeHtml(req.body.name, { allowedTags: [], allowedAttributes: [] });
-    if(typeof req.body.name !== 'string'){
-      return res.status(400).json({ code: 2, field: 'name', description: 'name is required', message: 'Name cannot be blank' });
-    }
+  // finish current stage of tournament and go to next one
+  app.put('/api/tournaments/name/:name/stage/end', function (req, res){
+    var name = sanitizeHtml(req.params.name, { allowedTags: [], allowedAttributes: [] });
     return tournaments.stage.setNextStage({ consumer: { id: req.user.id }, name: name }, function (data){
       return res.status(data.status).json(data.content);
     });
   });
 
-  // try to resolove matches of the current stage of tournament, required params 'name'
-  // app.post('/api/tournaments/stage/matches/resolve', function (req, res){
-  //   var name = sanitizeHtml(req.body.name, { allowedTags: [], allowedAttributes: [] });
-  //   if(typeof req.body.name !== 'string'){
-  //     return res.status(400).json({ code: 2, field: 'name', description: 'name is required', message: 'Name cannot be blank' });
-  //   }
-  //   return tournaments.stage.tryResolveMatches({ consumer: { id: req.user.id }, name: name }, function (data){
-  //     return res.status(data.status).json(data.content);
-  //   });
-  // });
+  // works fine xD
+  // try to resolove matches of the current stage of tournament
+  app.put('/api/tournaments/name/:name/stage/resolve', function (req, res){
+    var name = sanitizeHtml(req.params.name, { allowedTags: [], allowedAttributes: [] });
+    return tournaments.stage.tryResolveMatches({ consumer: { id: req.user.id }, name: name }, function (data){
+      return res.status(data.status).json(data.content);
+    });
+  });
+
+  // edit match by id of the current stage of tournament, required params 'winner'
+  app.put('/api/tournaments/name/:name/match/:id', function (req, res){
+    var name = sanitizeHtml(req.params.name, { allowedTags: [], allowedAttributes: [] });
+    var id = sanitizeHtml(req.params.id, { allowedTags: [], allowedAttributes: [] });
+    if(!/^[0-9a-fA-F]{24}$/.test(req.params.id)){
+      return res.status(400).json({ code: 3, field: 'id', description: 'id validation is wrong', message: 'Wrong id' }); 
+    }
+    if(typeof req.body.winner !== 'number'){
+      return res.status(400).json({ code: 2, field: 'winner', description: 'winner is required', message: 'Winner cannot be blank' });
+    }
+    if(req.body.winner !== 0 && req.body.winner !== 1){
+      return res.status(400).json({ code: 3, field: 'winner', description: 'winner validation is wrong', message: 'Winner must be 0 or 1' }); 
+    }
+    return tournaments.stage.resolveMatch({ consumer: { id: req.user.id }, name: name, match: { id: id, winner: req.body.winner } }, function (data){
+      return res.status(data.status).json(data.content);
+    });
+  });
+
 };
 
 function validateDate(elementValue){

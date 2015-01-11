@@ -16,53 +16,21 @@
 			            {{teamForm}}
 					</div>
 					<div class="col-lg-6">
-						<h4>Joing existing team</h4>
-						display list of all teams?on click- snippet with team info?
-						<div class="list-group">
-							<label 
-							ng-class="{'list-group-item':selectedTeam!=$index,'list-group-item active':selectedTeam===$index,'list-group-item disabled':team.requests.indexOf(user.username)>-1}" 
-							ng-model="selectedTeam"
-							ng-click="selectTeam($index)"
-							ng-repeat="team in teamList">
-								{{team.name.original}}
-								<span class="badge">{{team.players.length}}</span>
-							</label>
-						</div>
-						{{teamList}}
-						{{selectedTeam}}
-						<button ng-show="selectedTeam>=0" class="btn" ng-click="joinTeam()">Join selected team from the list?</button>
+						<team-teams-list></team-teams-list>
 					</div>
 				</div>
 			</div>
 
 			<div ng-show="user.team">
-				<h3>Your team: {{user.team}}</h3>
-				<p>Your role in team: {{user.duty}}</p>
+				<h3><b>{{user.duty|uppercase}}</b> of team: {{user.team}}</h3>
 				
-
-
-				<!--CAPTAIN STUFF can be in file or even state-->
 				<div ng-show="user.duty==='captain'">
-					you can manage your team
 					<div class="row">
 						<div class="col-lg-6">
-							<h4>team members list for <u>{{user.team}}</u></h4>
-							<div class="list-group col-lg-6">
-								<label class="list-group-item" ng-repeat="member in teamMemberList">{{member}}
-								<span ng-click="kickMember(member)" class="glyphicon glyphicon-remove"></span>
-								</label>
-								{{teamMemberList}}
-							</div>
+							<team-member-list></team-member-list>
 						</div>
-						<div class="col-lg-6">
-							<h4>team requests list?</h4>
-							<div class="list-group col-lg-6">
-								<label class="list-group-item" ng-repeat="request in requestsList">{{request}}
-								<span ng-click="handleTeamRequest(request,'true')" class="glyphicon glyphicon-thumbs-up"></span>
-								<span ng-click="handleTeamRequest(request,'false')" class="glyphicon glyphicon-thumbs-down"></span>
-								</label>
-							</div>
-
+						<div class="col-lg-6" ng-show="user.duty==='captain'">
+							<team-request-list>Only for captains</team-request-list>
 						</div>
 					</div>
 					<button class="btn btn-danger" ng-click="disbandTeam()">delete team</button>

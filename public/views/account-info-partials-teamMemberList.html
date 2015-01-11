@@ -1,0 +1,7 @@
+<h4>team members list for <u>{{user.team}}</u></h4>
+<div class="list-group col-lg-6">
+	<label class="list-group-item" ng-repeat="member in teamMemberList">{{member}}
+	<span ng-click="kickMember(member)" class="glyphicon glyphicon-remove"></span>
+	</label>
+	{{teamMemberList}}
+</div>

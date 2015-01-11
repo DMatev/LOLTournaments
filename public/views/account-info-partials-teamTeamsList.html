@@ -1,0 +1,12 @@
+<h4>Join existing team</h4>
+<div class="list-group">
+	<label 
+	ng-class="{'list-group-item':selectedTeam!=$index,'list-group-item active':selectedTeam===$index,'list-group-item disabled':team.requests.indexOf(user.username)>-1}" 
+	ng-model="selectedTeam"
+	ng-click="selectTeam($index)"
+	ng-repeat="team in teamList">
+		{{team.name.original}}
+		<span class="badge">{{team.players.length}}</span>
+	</label>
+</div>
+<button ng-show="selectedTeam>=0" class="btn" ng-click="joinTeam()">Join selected team from the list?</button>

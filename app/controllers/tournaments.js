@@ -2,6 +2,42 @@ var User = require('../models/user');
 var Tournament = require('../models/tournament');
 var HallOfFame = require('../models/hallOfFame');
 
+function getAll(data, next){
+	User.findById(data.consumer.id, function (err, consumer){
+		if(err){
+			return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+		}
+		if(!consumer){
+			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'You cant do this action right now, please try again later' } });
+		} else {
+			Tournament.find(function (err, tournaments){
+				if(err){
+					return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+				}
+				return next({ status: 200, content: tournaments });
+			});
+		}
+	});
+};
+
+function getByName(data, next){
+	User.findById(data.consumer.id, function (err, consumer){
+		if(err){
+			return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+		}
+		if(!consumer){
+			return next({ status: 500, content: { code: 10, description: 'user not found', message: 'You cant do this action right now, please try again later' } });
+		} else {
+			Tournament.findOne({ 'name.lowerCase': data.name.toLowerCase() }, function (err, tournament){
+				if(err){
+					return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+				}
+				return next({ status: 200, content: tournament });
+			});
+		}
+	});
+};
+
 function create(data, next){
 	var tournamentNameLowerCase = data.tournament.name.toLowerCase();
 	User.findById(data.consumer.id, function (err, consumer){
@@ -115,6 +151,7 @@ function setCurrentStageEndDate(data, next){
 };
 
 function moveCurrentStageToHistory(data, next){
+	var tournamentNameLowerCase = data.name.toLowerCase();
 	User.findById(data.consumer.id, function (err, consumer){
 		if(err){
 			return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
@@ -125,7 +162,7 @@ function moveCurrentStageToHistory(data, next){
 			if(consumer.account.role !== 'admin'){
 				return next({ status: 403, content: { code: 8, description: 'forbidden, admins only', message: 'Only admins can end stage of tournaments' } });	
 			} else {
-				Tournament.findOne({ 'name.lowerCase': data.name.toLowerCase() }, function (err, tournament){
+				Tournament.findOne({ 'name.lowerCase': tournamentNameLowerCase }, function (err, tournament){
 					if(err){
 						return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 					}
@@ -144,7 +181,7 @@ function moveCurrentStageToHistory(data, next){
 									return next({ status: 400, content: { code: 35, description: 'last stage of tournament', message: 'This tournament is in his last stage' } });
 								}
 							} else {
-								Tournament.update({ 'name.lowerCase': data.name.toLowerCase() }, { $push: { history: history }, $set: { currentStage: currentStage } }, { multi: true }, function (err, result){
+								Tournament.update({ 'name.lowerCase': tournamentNameLowerCase }, { $push: { history: history }, $set: { currentStage: currentStage, resultsFromCaptains: [] } }, { multi: true }, function (err, result){
 									if(err){
 										return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 									} else {
@@ -221,6 +258,8 @@ function finish(data, next){
 	});
 };
 
+exports.getAll = getAll;
+exports.getByName = getByName;
 exports.create = create;
 exports.start = startFirstStage;
 exports.end = finish;

@@ -105,7 +105,8 @@ angular.module('AuthenticationController', [])
       // });
       
       $http
-      .get('/api/userinfo') 
+      //.post('/api/tournaments/stage/end', { name: 'cup of EUW' }) 
+      .get('/api/tournaments')
       .success(function (data, status, headers, config) {
         console.log(data);
       })

@@ -263,7 +263,7 @@ module.exports = function(app) {
     });
   });
 
-  // DONT NEED THIS SHIT, SHOULD BE AUTMATIC
+  // its automatic, but admins can post made up stuff here
   // post record for Hall Of Fame, required params 'team, tournament'
   app.post('/api/halloffame', function (req, res){
     var team = sanitizeHtml(req.body.team, { allowedTags: [], allowedAttributes: [] });
@@ -424,6 +424,21 @@ module.exports = function(app) {
     });
   });
 
+  // get all tournaments
+  app.get('/api/tournaments', function (req, res){
+    return tournaments.getAll({ consumer: { id: req.user.id } }, function (data){
+      return res.status(data.status).json(data.content);
+    });
+  });
+
+  // get tournament by name
+  app.get('/api/tournaments/name/:name', function (req, res){
+    var name = sanitizeHtml(req.params.name, { allowedTags: [], allowedAttributes: [] });
+    return tournaments.getByName({ consumer: { id: req.user.id }, name: name }, function (data){
+      return res.status(data.status).json(data.content);
+    });
+  });
+
   // create tournament, required params 'name, numberOfCompetitors', optinal params 'type'
   app.post('/api/tournaments', function (req, res){
     var name = sanitizeHtml(req.body.name, { allowedTags: [], allowedAttributes: [] });
@@ -505,6 +520,16 @@ module.exports = function(app) {
     });
   });
 
+  // try to resolove matches of the current stage of tournament, required params 'name'
+  // app.post('/api/tournaments/stage/matches/resolve', function (req, res){
+  //   var name = sanitizeHtml(req.body.name, { allowedTags: [], allowedAttributes: [] });
+  //   if(typeof req.body.name !== 'string'){
+  //     return res.status(400).json({ code: 2, field: 'name', description: 'name is required', message: 'Name cannot be blank' });
+  //   }
+  //   return tournaments.stage.tryResolveMatches({ consumer: { id: req.user.id }, name: name }, function (data){
+  //     return res.status(data.status).json(data.content);
+  //   });
+  // });
 };
 
 function validateDate(elementValue){

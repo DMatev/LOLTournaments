@@ -3,6 +3,9 @@
 		<h2>{{user.username}}</h2>
 		{{user}}
 		<p>Ola to your account page. Should contain info, edit, and personal stuff???</p>
+
+
+		<!--USER STUFF-->
 		<div ng-if="user.role==='user'" class="well well-sm" ng-controller="TeamCtrl">
 			<div ng-show="!user.team">
 				<h3>You don't have a team</h3>
@@ -53,7 +56,10 @@
 			</div>
 		</div>
 
+
+		<!--ADMIN STUFF-->
 		<div ng-show="user.role==='admin'" class="well well-sm" ng-controller="AdminCtrl">
+			<!--MESS WITH TOURNAMENTS-->
 			<div class="row">
 				<div class="col-lg-6">
 					<h4>Create new tournament</h4>
@@ -100,6 +106,23 @@
 
 				</div>
 			</div>
+
+
+			<!--MESS WITH NEWS-->
+			<div class="row">
+				<div class="col-lg-12">
+					<h4>future news control</h4>
+					<form id="newsForm" ng-submit="createNews()">
+			              <input ng-model="newsForm.title" type="text" name="title" placeholder="title of the news" />
+
+			             <textarea class="form-control" rows="3" ng-model="newsForm.content"></textarea>
+
+			              <button type="submit" class="btn btn-danger">Post news</button>
+			            </form>
+			           {{newsForm}}
+				</div>
+			</div>
+
 		</div>
 	</div>
 </div>

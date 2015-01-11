@@ -4,6 +4,18 @@ angular.module('AdminController',[])
 	  $scope.users = [];
 	  $scope.tournamentForm={};
 	  $scope.tournamentList={};
+	  $scope.newsForm={};
+
+	  $scope.createNews=function(){
+	  	console.log($scope.newsForm);
+	  	$http.post('/api/news',{title:$scope.newsForm.title,content:$scope.newsForm.content})
+	  		.success(function(data){
+	  			console.log(data);
+	  		})
+	  		.error(function(data){
+	  			console.log(data);
+	  		});
+	  };
 
 	  $scope.createTournament=function(){
 	  	$http.post('/api/tournaments',{

@@ -1,12 +1,36 @@
 'use strict';
 angular.module('AdminController',[])
 	.controller('AdminCtrl', function($scope, $http) {
-	  // List of users got from the server
 	  $scope.users = [];
+	  $scope.tournamentForm={};
+	  $scope.tournamentList={};
 
-	  // Fill the array to display it in the page
-	  $http.get('/users').success(function(users){
-	    for (var i in users)
-	      $scope.users.push(users[i]);
-	  });
-	});
+	  $scope.createTournament=function(){
+	  	$http.post('/api/tournaments',{
+	  		name:$scope.tournamentForm.tournamentName,
+	  		numberOfCompetitors:$scope.tournamentForm.tournamentParticipantsNumber})
+	  		.success(function(data){
+	  			console.log(data);
+	  		})
+	  		.error(function(data){
+	  			console.log(data);
+	  		})
+	  }
+
+	  function getAllTournaments(){
+			$http.get('/api/tournaments')
+				.success(function(data){
+					$scope.tournamentList=data;
+					console.log(data);
+				})
+				.error(function(data){
+					console.log(data);
+				});
+		}
+		getAllTournaments();
+	 
+	})
+	.controller('accordionTournaments',function($scope){
+		$scope.oneAtATime=true;
+		
+	})

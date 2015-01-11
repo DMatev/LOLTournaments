@@ -3,7 +3,7 @@
 		<h2>{{user.username}}</h2>
 		{{user}}
 		<p>Ola to your account page. Should contain info, edit, and personal stuff???</p>
-		<div class="well well-sm" ng-controller="TeamCtrl">
+		<div ng-if="user.role==='user'" class="well well-sm" ng-controller="TeamCtrl">
 			<div ng-show="!user.team">
 				<h3>You don't have a team</h3>
 				<div class="row">
@@ -24,20 +24,64 @@
 			<div ng-show="user.team">
 				<h3><b>{{user.duty|uppercase}}</b> of team: {{user.team}}</h3>
 				
-				<div ng-show="user.duty==='captain'">
 					<div class="row">
 						<div class="col-lg-6">
-							<team-member-list></team-member-list>
-						</div>
-						<div class="col-lg-6" ng-show="user.duty==='captain'">
-							<team-request-list>Only for captains</team-request-list>
-						</div>
-					</div>
-					<button class="btn btn-danger" ng-click="disbandTeam()">delete team</button>
-				</div>
+							<div class="row">
+								<div class="col-lg-10 col-lg-offset-1">
+									<team-member-list></team-member-list>
+								</div>
+							</div>
+							<div class="row">
+								
+								<div class="col-lg-8 col-lg-offset-2" 
+								ng-if="user.duty==='captain'"
+								ng-hide="myTeam.status==='signed'">
+									<team-tournament-join></team-tournament-join>
+								</div>
+							</div>
 
+						</div>
+						<div class="col-lg-6" ng-if="user.duty==='captain'">
+							<team-request-list></team-request-list>
+						</div>
+					</div>	
+					<div class="row">
+						<button class="btn btn-danger btn-block" ng-click="disbandTeam()">
+							delete team(because you know deep inside of you lies a <i>MEAN</i> mfker)
+						</button>
+					</div>
 			</div>
-		
+		</div>
+
+		<div ng-show="user.role==='admin'" class="well well-sm" ng-controller="AdminCtrl">
+			<div class="row">
+				<div class="col-lg-6">
+					<h4>Create new tournament</h4>
+						<form id="tournamentForm" ng-submit="createTournament()">
+			              <input ng-model="tournamentForm.tournamentName" type="text" name="team" placeholder="name of the tournament" />
+			              <input ng-model="tournamentForm.tournamentParticipantsNumber" type="number" name="number" placeholder="number of teams" />
+			              <button type="submit" class="btn btn-danger">Create a tournament</button>
+			            </form>
+			            {{tournamentForm}}
+				</div>
+				<div class="col-lg-6">
+					<h4>Existing tournaments:</h4>
+
+					<div ng-controller="accordionTournaments">
+						<accordion close-others="oneAtATime">
+							<accordion-group ng-repeat="tournament in tournamentList"
+							heading="{{tournament.name.original}} {{tournament.teams.length}}/{{tournament.numberOfCompetitors}} ">
+						      Number of teams: {{tournament.numberOfCompetitors}}
+						      <div ng-repeat="team in tournament.teams">
+						      	{{team.name}}
+						      </div>
+						    </accordion-group>
+						</accordion>
+					</div>
+
+
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

@@ -14,8 +14,17 @@ angular.module('AdminController',[])
 	  		})
 	  		.error(function(data){
 	  			console.log(data);
-	  		})
-	  }
+	  		});
+	  };
+
+	  $scope.startTournament=function(tournamentName){
+	  	$http.put('/api/tournaments/name/'+tournamentName+'/start')
+	  		.success(function(data){
+	  			console.log(data);
+	  		}).error(function(data){
+	  			console.log(data);
+	  		});
+	  };
 
 	  function getAllTournaments(){
 			$http.get('/api/tournaments')
@@ -30,7 +39,16 @@ angular.module('AdminController',[])
 		getAllTournaments();
 	 
 	})
-	.controller('accordionTournaments',function($scope){
+	.controller('accordionTournaments',['$scope','$http',function($scope,$http){
+		
 		$scope.oneAtATime=true;
 		
-	})
+		$scope.startTournament=function(tournamentName){
+		  	$http.put('/api/tournaments/name/'+tournamentName+'/start')
+		  		.success(function(data){
+		  			console.log(data);
+		  		}).error(function(data){
+		  			console.log(data);
+		  		});
+		  };
+	}]);

@@ -15,4 +15,9 @@ angular.module('TeamDirectives',[])
 			restrict:'E',
 			templateUrl:'views/account-info-partials-teamTeamsList.html'
 		};
+	}).directive('teamTournamentJoin',function(){
+		return{
+			restrict:'E',
+			templateUrl:'views/account-info-partials-teamTournamentJoin.html'
+		};
 	});

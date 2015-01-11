@@ -100,8 +100,12 @@ angular.module('TeamController',[])
 				});
 		};
 
-		$scope.joinTournament=function(){
-			$http.post('/api/myteam/tournament',{name:$scope.selectedTournament})
+		$scope.change=function(tournament){
+			$scope.selectedTournament=tournament;
+		};
+
+		$scope.joinTournament=function(selectedTournament){
+			$http.post('/api/myteam/tournament',{name:selectedTournament.name.original})
 				.success(function(data){
 					console.log(data);
 				})

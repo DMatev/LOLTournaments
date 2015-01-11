@@ -70,11 +70,29 @@
 					<div ng-controller="accordionTournaments">
 						<accordion close-others="oneAtATime">
 							<accordion-group ng-repeat="tournament in tournamentList"
-							heading="{{tournament.name.original}} {{tournament.teams.length}}/{{tournament.numberOfCompetitors}} ">
-						      Number of teams: {{tournament.numberOfCompetitors}}
+							heading="{{tournament.name.original}} {{tournament.teams.length}}/{{tournament.numberOfCompetitors}}" ng-class="{'blueaccordion':tournament.stage.isRunning}">
+						      <p>
+						      	Stage:{{tournament.stage.isRunning?'Running':'not Running'}}
+						      </p>
 						      <div ng-repeat="team in tournament.teams">
 						      	{{team.name}}
 						      </div>
+						      <h5>Current stage:</h5>
+						      <div class="row" ng-repeat="match in tournament.currentStage.matches">
+						      	<div class="col-lg-6 col-lg-offset-2">
+						      		<div class="btn-group">
+						      			<label class="btn btn-default">{{match.team1}}</label>
+						      			<label class="btn btn-default">{{match.team2}}</label>
+						      		</div>
+						      	</div>
+						      </div>
+
+						      <button ng-show="!tournament.stage.isRunning" class="btn btn-primary" 
+						      ng-click="startTournament(tournament.name.original)">
+						      	start tournament
+						      </button>
+						      <button ng-show="tournament.stage.isRunning" class="btn btn-danger">Resolve</button>
+
 						    </accordion-group>
 						</accordion>
 					</div>

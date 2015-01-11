@@ -5,7 +5,7 @@ angular.module('appRoutes',[])
       
       $stateProvider
         .state('home',{
-          url:'',
+          url:'/',
           templateUrl:'views/main.html'
         })
         .state('account',{
@@ -14,14 +14,14 @@ angular.module('appRoutes',[])
               return $http.get('/api/userinfo')
                 .then(function(data){
                   console.log(data.data);
-                  return data.data
+                  return data.data;
                 });
             }]
           },*/
           url:'/account',
-          templateUrl:'views/account.html',
+          templateUrl:'views/account.html'
         });
 
 
-      $urlRouterProvider.otherwise('');
+      $urlRouterProvider.otherwise('/');
    }]);

@@ -1,0 +1,7 @@
+<h4>sign team for tournament</h4>
+<div class="row">
+	<select ng-options="tournament.name.original for tournament in tournamentList" ng-model="selectedTournament" ng-change="change(selectedTournament)">
+	</select>
+	{{selectedTournament}}
+	<button ng-click="joinTournament(selectedTournament)">sign</button>
+</div>

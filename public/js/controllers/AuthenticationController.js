@@ -86,15 +86,6 @@ angular.module('AuthenticationController', [])
     };
 
     $scope.sendAwesomeAjax = function () {
-      // $http
-      // .post('/api/team/requests', {name: 'ditkom', approved: true }) 
-      // .success(function (data, status, headers, config) {
-      //   console.log(data);
-      // })
-      // .error(function (data, status, headers, config) {
-      //   console.log(data);
-      // });
-
       // $http({url: '/api/teams', method: 'GET', params: {name: 'ChobanitE'}})
       // .success(function (data, status, headers, config) {
       //   console.log(data);
@@ -105,7 +96,8 @@ angular.module('AuthenticationController', [])
       // });
       
       $http
-      .get('/api/tournaments') 
+      //.get('/api/tournaments') 
+      .post('/api/news/54b3082cdecb507c1974ef2f/comment',{content: 'bla bla'})
       .success(function (data, status, headers, config) {
         console.log(data);
       })

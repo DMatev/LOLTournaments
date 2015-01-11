@@ -111,22 +111,65 @@
 			<!--MESS WITH NEWS-->
 			<div class="row">
 				<div class="col-lg-12">
-					<h4>future news control</h4>
+					<h4>News</h4>
+
+					<!--show all news-->
+					<div ng-controller="accordionNews">
+						<accordion close-others="oneAtATime">
+							<accordion-group ng-repeat="news in newsList"
+							heading="{{news.title}} ">
+						      <p>Title: {{news.title}}</p>
+						      <p>Content: {{news.content}}</p>
+						      <p>Author: {{news.author}}</p>
+						      <accordion ng-show="news.comments.length>0" close-others="oneAtATime">
+							      <accordion-group heading="Comments({{news.comments.length}})">
+								      <ul ng-show="news.comments.length>0">	
+										  <li ng-repeat="comment in news.comments">
+										  	<p>Content: {{comment.content}}</p>
+										  	<p>Author: {{comment.author}}</p>
+										  	<p>Post at: {{comment.postDate}}</p>
+										  	<td class="col-md-1"><span ng-click="deleteComment(news._id,comment._id)" class="glyphicon glyphicon-remove"></span></td>
+										  </li>
+								      </ul>
+							      </accordion-group>
+							  </accordion>
+						      <td class="col-md-1"><span ng-click="editNews(news)" class="glyphicon glyphicon-pencil"></span></td>
+						      <td class="col-md-1"><span ng-click="deleteNews(news._id)" class="glyphicon glyphicon-remove"></span></td>
+						    </accordion-group>
+						</accordion>
+					</div>
+
+					<!--edit news-->
+					<div ng-show="newsEditForm.visible">
+						<h5>Edit news</h5>
+						<form id="newsForm" ng-submit="editThisNews()">
+				        	<input ng-model="newsEditForm.title" type="text" name="title" placeholder="title of the news" />
+				            <textarea ng-model="newsEditForm.content" class="form-control" rows="3"  placeholder="title of the news"></textarea>
+				            <button type="submit" class="btn btn-danger">Edit</button>
+				        </form>
+			        </div>
+
+					<!--post news-->
+					<h5>Create news</h5>
 					<form id="newsForm" ng-submit="createNews()">
 			        	<input ng-model="newsForm.title" type="text" name="title" placeholder="title of the news" />
-			            <textarea class="form-control" rows="3" ng-model="newsForm.content"></textarea>
-			            <button type="submit" class="btn btn-danger">Post news</button>
+			            <textarea ng-model="newsForm.content" class="form-control" rows="3"  placeholder="title of the news"></textarea>
+			            <button type="submit" class="btn btn-danger">Create</button>
 			        </form>
-			        {{newsForm}}
 				</div>
 			</div>
 
 
 
 			<!--MESS WITH Hall Of Fame-->
+
 			<div class="row">
 				<div class="col-lg-12">
 					<h4>Hall Of Fame</h4>
+
+						<!--show all records from Hall Of Fame-->
+						<div ng-show="hallOfFameList.length>0">
+						<h5>Records</h5>
 						<table class="table table-striped">
 							<th>Team</th><th>Tournament</th><th>Edit</th><th>Remove</th>
 							<tr ng-repeat="record in hallOfFameList">
@@ -136,9 +179,11 @@
 							    <td class="col-md-1"><span ng-click="deleteHallOfFameRecord(record._id)" class="glyphicon glyphicon-remove"></span></td>
 							</tr>						
 				      	</table>
+				      	</div>
 
+				    <!--edit record from Hall Of Fame-->
 				    <div ng-show="hallOfFameEditForm.visible">
-				    	<h4>edit record</h4>
+				    	<h5>edit record</h5>
 				    	<form id="hallOfFameEditForm" ng-submit="editHallOfFameRecord()">
 			            <input ng-model="hallOfFameEditForm.team" type="text" name="team" placeholder="name of the team" />
 						<input ng-model="hallOfFameEditForm.tournament" type="text" name="tournament" placeholder="name of the tournament" />
@@ -146,7 +191,8 @@
 				        </form>
 				    </div>
 
-				    <h4>create record</h4>
+				    <!--create record for Hall Of Fame-->
+				    <h5>create record</h5>
 					<form id="hallOfFameForm" ng-submit="createHallOfFameRecord()">
 			            <input ng-model="hallOfFameForm.team" type="text" name="team" placeholder="name of the team" />
 						<input ng-model="hallOfFameForm.tournament" type="text" name="tournament" placeholder="name of the tournament" />

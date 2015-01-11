@@ -214,24 +214,24 @@ module.exports = function(app) {
     var title = sanitizeHtml(req.body.title, { allowedTags: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'b', 'i', 'strong', 'em', 'strike'], allowedAttributes: [] });
     var content = sanitizeHtml(req.body.content, { allowedTags: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'b', 'i', 'strong', 'em', 'strike'], allowedAttributes: [] });
     var author = sanitizeHtml(req.body.author, { allowedTags: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'b', 'i', 'strong', 'em', 'strike'], allowedAttributes: [] });
-    var news = { };
+    var editNews = { };
     if(!/^[0-9a-fA-F]{24}$/.test(req.params.id)){
       return res.status(400).json({ code: 3, field: 'id', description: 'id validation is wrong', message: 'Wrong id' }); 
     }
     if(typeof req.body.title === 'string'){
-      news.title = title;
+      editNews.title = title;
     }
     if(typeof req.body.content === 'string'){
-      news.content = content;
+      editNews.content = content;
     }
     if(typeof req.body.author === 'string'){
-      news.author = author;
+      editNews.author = author;
     }
     if(typeof req.body.isVisible === 'boolean'){
-      news.isVisible = req.body.isVisible;
+      editNews.isVisible = req.body.isVisible;
     }
-    news.id = req.params.id;
-    return news.edit({ consumer: { id: req.user.id }, news: news }, function (data){
+    editNews.id = req.params.id;
+    return news.edit({ consumer: { id: req.user.id }, news: editNews }, function (data){
       return res.status(data.status).json(data.content);
     });
   });

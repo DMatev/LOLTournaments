@@ -1,8 +1,8 @@
 <div class="well">
 	<div class="row">
 		<h2>{{user.username}}</h2>
-		{{user}}
-		<p>Ola to your account page. Should contain info, edit, and personal stuff???</p>
+<!-- 		{{user}}
+		<p>Ola to your account page. Should contain info, edit, and personal stuff???</p> -->
 
 
 		<!--USER STUFF-->
@@ -60,55 +60,53 @@
 		<!--ADMIN STUFF-->
 		<div ng-show="user.role==='admin'" class="well well-sm" ng-controller="AdminCtrl">
 			<!--MESS WITH TOURNAMENTS-->
-			<div class="row">
-				<div class="col-lg-6">
-					<h4>Create new tournament</h4>
-						<form id="tournamentForm" ng-submit="createTournament()">
-			              <input ng-model="tournamentForm.tournamentName" type="text" name="team" placeholder="name of the tournament" />
-			              <input ng-model="tournamentForm.tournamentParticipantsNumber" type="number" name="number" placeholder="number of teams" />
-			              <button type="submit" class="btn btn-danger">Create a tournament</button>
-			            </form>
-			            {{tournamentForm}}
-				</div>
-				<div class="col-lg-6">
-					<h4>Existing tournaments:</h4>
-
-					<div ng-controller="accordionTournaments">
-						<accordion close-others="oneAtATime">
-							<accordion-group ng-repeat="tournament in tournamentList"
-							heading="{{tournament.name.original}} {{tournament.teams.length}}/{{tournament.numberOfCompetitors}}" ng-class="{'blueaccordion':tournament.stage.isRunning}">
-						      <p>
-						      	Stage:{{tournament.stage.isRunning?'Running':'not Running'}}
-						      </p>
-						      <div ng-repeat="team in tournament.teams">
-						      	{{team.name}}
-						      </div>
-						      <h5>Current stage:</h5>
-						      <div class="row" ng-repeat="match in tournament.currentStage.matches">
-						      	<div class="col-lg-6 col-lg-offset-2">
-						      		<div class="btn-group">
-						      			<label class="btn btn-default">{{match.team1}}</label>
-						      			<label class="btn btn-default">{{match.team2}}</label>
-						      		</div>
-						      	</div>
-						      </div>
-
-						      <button ng-show="!tournament.stage.isRunning" class="btn btn-primary" 
-						      ng-click="startTournament(tournament.name.original)">
-						      	start tournament
-						      </button>
-						      <button ng-show="tournament.stage.isRunning" class="btn btn-danger">Resolve</button>
-
-						    </accordion-group>
-						</accordion>
+			<div class="well well-sm">
+				<div class="row">
+					<div class="col-lg-8">
+						<h4>Existing tournaments:</h4>
+						<div ng-controller="accordionTournaments">
+							<accordion close-others="oneAtATime">
+								<accordion-group ng-repeat="tournament in tournamentList"
+								heading="{{tournament.name.original}} {{tournament.teams.length}}/{{tournament.numberOfCompetitors}}" ng-class="{'blueaccordion':tournament.stage.isRunning}">
+							      <p>
+							      	Stage:{{tournament.stage.isRunning?'Running':'not Running'}}
+							      </p>
+							      <div ng-repeat="team in tournament.teams">
+							      	{{team.name}}
+							      </div>
+							      <h5>Current stage:</h5>
+							      <div class="row" ng-repeat="match in tournament.currentStage.matches">
+							      	<div class="col-lg-6 col-lg-offset-2">
+							      		<div class="btn-group">
+							      			<label class="btn btn-default">{{match.team1}}</label>
+							      			<label class="btn btn-default">{{match.team2}}</label>
+							      		</div>
+							      	</div>
+							      </div>
+							      <button ng-show="!tournament.stage.isRunning" class="btn btn-primary" 
+							      ng-click="startTournament(tournament.name.original)">
+							      	start tournament
+							      </button>
+							      <button ng-show="tournament.stage.isRunning" class="btn btn-danger">Resolve</button>
+							    </accordion-group>
+							</accordion>
+						</div>
+					</div>
+					<div class="col-lg-4">
+						<h4>Create new tournament</h4>
+							<form id="tournamentForm" ng-submit="createTournament()">
+				              <p><input ng-model="tournamentForm.tournamentName" type="text" name="team" placeholder="name of the tournament" /></p>
+				              <p><input ng-model="tournamentForm.tournamentParticipantsNumber" type="number" name="number" placeholder="number of teams" /></p>
+				              <button type="submit" class="btn btn-danger">Create a tournament</button>
+				            </form>
 					</div>
 
 
 				</div>
 			</div>
 
-
 			<!--MESS WITH NEWS-->
+		<div class="well well-sm">
 			<div class="row">
 				<div class="col-lg-12">
 					<h4>News</h4>
@@ -140,49 +138,51 @@
 					</div>
 
 					<!--edit news-->
-					<div ng-show="newsEditForm.visible">
+					<div ng-show="newsEditForm.visible" class="col-lg-6">
 						<h5>Edit news</h5>
 						<form id="newsForm" ng-submit="editThisNews()">
-				        	<input ng-model="newsEditForm.title" type="text" name="title" placeholder="title of the news" />
-				            <textarea ng-model="newsEditForm.content" class="form-control" rows="3"  placeholder="title of the news"></textarea>
-				            <button type="submit" class="btn btn-danger">Edit</button>
+				        	<p><input ng-model="newsEditForm.title" type="text" name="title" placeholder="title of the news" /></p>
+				            <p><textarea ng-model="newsEditForm.content" class="form-control" rows="5"  placeholder="title of the news"></textarea></p>
+				            <p><button type="submit" class="btn btn-danger">Edit</button></p>
 				        </form>
 			        </div>
 
 					<!--post news-->
-					<h5>Create news</h5>
-					<form id="newsForm" ng-submit="createNews()">
-			        	<input ng-model="newsForm.title" type="text" name="title" placeholder="title of the news" />
-			            <textarea ng-model="newsForm.content" class="form-control" rows="3"  placeholder="title of the news"></textarea>
-			            <button type="submit" class="btn btn-danger">Create</button>
-			        </form>
+					<div class="col-lg-6">
+						<h5>Create news</h5>
+						<form id="newsForm" ng-submit="createNews()">
+				        	<p><input ng-model="newsForm.title" type="text" name="title" placeholder="title of the news" /></p>
+				            <p><textarea ng-model="newsForm.content" class="form-control" rows="5"  placeholder="title of the news"></textarea></p>
+				            <p><button type="submit" class="btn btn-danger">Create</button></p>
+				        </form>
+			        </div>
 				</div>
 			</div>
-
+		</div>
 
 
 			<!--MESS WITH Hall Of Fame-->
-
+		<div class="well well-sm">
 			<div class="row">
 				<div class="col-lg-12">
 					<h4>Hall Of Fame</h4>
 
-						<!--show all records from Hall Of Fame-->
-						<div ng-show="hallOfFameList.length>0">
-							<h5>Records</h5>
-							<table class="table table-striped">
-								<th>Team</th><th>Tournament</th><th>Edit</th><th>Remove</th>
-								<tr ng-repeat="record in hallOfFameList">
-								    <td class="col-md-5">{{record.team}}</td>
-								    <td class="col-md-5">{{record.tournament}}</td>
-								    <td class="col-md-1"><span ng-click="editHallOfFame(record)" class="glyphicon glyphicon-pencil"></span></td>
-								    <td class="col-md-1"><span ng-click="deleteHallOfFameRecord(record._id)" class="glyphicon glyphicon-remove"></span></td>
-								</tr>						
-					      	</table>
-				      	</div>
+					<!--show all records from Hall Of Fame-->
+					<div ng-show="hallOfFameList.length>0">
+						<h5>Records</h5>
+						<table class="table table-striped">
+							<th>Team</th><th>Tournament</th><th>Edit</th><th>Remove</th>
+							<tr ng-repeat="record in hallOfFameList">
+							    <td class="col-md-5">{{record.team}}</td>
+							    <td class="col-md-5">{{record.tournament}}</td>
+							    <td class="col-md-1"><span ng-click="editHallOfFame(record)" class="glyphicon glyphicon-pencil"></span></td>
+							    <td class="col-md-1"><span ng-click="deleteHallOfFameRecord(record._id)" class="glyphicon glyphicon-remove"></span></td>
+							</tr>						
+				      	</table>
+			      	</div>
 
 				    <!--edit record from Hall Of Fame-->
-				    <div ng-show="hallOfFameEditForm.visible">
+				    <div ng-show="hallOfFameEditForm.visible" class="col-lg-6">
 				    	<h5>edit record</h5>
 				    	<form id="hallOfFameEditForm" ng-submit="editHallOfFameRecord()">
 			            <input ng-model="hallOfFameEditForm.team" type="text" name="team" placeholder="name of the team" />
@@ -192,15 +192,17 @@
 				    </div>
 
 				    <!--create record for Hall Of Fame-->
-				    <h5>create record</h5>
-					<form id="hallOfFameForm" ng-submit="createHallOfFameRecord()">
-			            <input ng-model="hallOfFameForm.team" type="text" name="team" placeholder="name of the team" />
-						<input ng-model="hallOfFameForm.tournament" type="text" name="tournament" placeholder="name of the tournament" />
-			            <button type="submit" class="btn btn-danger">Create record</button>
-			        </form>
-			        
+				    <div class="col-lg-6">
+					    <h5>create record</h5>
+						<form id="hallOfFameForm" ng-submit="createHallOfFameRecord()">
+				            <input ng-model="hallOfFameForm.team" type="text" name="team" placeholder="name of the team" />
+							<input ng-model="hallOfFameForm.tournament" type="text" name="tournament" placeholder="name of the tournament" />
+				            <button type="submit" class="btn btn-danger">Create record</button>
+				        </form>
+			        </div>
 				</div>
 			</div>
+		</div>
 
 		</div>
 	</div>

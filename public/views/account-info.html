@@ -123,18 +123,18 @@
 						      <p>Author: {{news.author}}</p>
 						      <accordion ng-show="news.comments.length>0" close-others="oneAtATime">
 							      <accordion-group heading="Comments({{news.comments.length}})">
-								      <ul ng-show="news.comments.length>0">	
+								      <ul ng-show="news.comments.length>0" style="list-style-type: none;">	
 										  <li ng-repeat="comment in news.comments">
 										  	<p>Content: {{comment.content}}</p>
 										  	<p>Author: {{comment.author}}</p>
 										  	<p>Post at: {{comment.postDate}}</p>
-										  	<td class="col-md-1"><span ng-click="deleteComment(news._id,comment._id)" class="glyphicon glyphicon-remove"></span></td>
+										  	<span ng-click="deleteComment(news._id,comment._id)" class="glyphicon glyphicon-remove"></span>
 										  </li>
 								      </ul>
 							      </accordion-group>
 							  </accordion>
-						      <td class="col-md-1"><span ng-click="editNews(news)" class="glyphicon glyphicon-pencil"></span></td>
-						      <td class="col-md-1"><span ng-click="deleteNews(news._id)" class="glyphicon glyphicon-remove"></span></td>
+						      <span ng-click="editNews(news)" class="glyphicon glyphicon-pencil"></span>
+						      <span ng-click="deleteNews(news._id)" class="glyphicon glyphicon-remove"></span>
 						    </accordion-group>
 						</accordion>
 					</div>

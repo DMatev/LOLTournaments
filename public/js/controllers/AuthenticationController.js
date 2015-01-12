@@ -100,7 +100,8 @@ angular.module('AuthenticationController', [])
       // });
       
       $http
-      .get('/api/tournaments') 
+      //.get('/api/tournaments') 
+      .post('/api/news/54b3232e9d5cdfc01735703b/comment', {content: '3'})
       .success(function (data, status, headers, config) {
         console.log(data);
       })

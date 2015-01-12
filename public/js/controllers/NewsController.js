@@ -2,12 +2,41 @@
 angular.module('NewsController',[])
 	.controller('NewsCtrl',['$scope','$http',function($scope,$http){
 		$scope.news=[];
-		$http.get('/api/news')
-			.success(function(data){
-				$scope.news=data;
-				console.log(data);
-			})
-			.error(function(data){
-				console.log(data);
-			});
+		$scope.oneAtATime=false;
+		$scope.collapsed=true;
+		$scope.commentsForm={};
+
+		function getNews(){
+			$http.get('/news')
+				.success(function(data){
+					$scope.news=data;
+					console.log(data);
+				})
+				.error(function(data){
+					console.log(data);
+				});
+		}
+
+		$scope.createComment=function(id){
+			$http
+			.post('/api/news/'+id+'/comment', {content: $scope.commentsForm.title})
+		     	.success(function (data, status, headers, config) {
+		     		console.log(data);
+		     		getNews();
+		     		$scope.commentsForm.title=null;
+		      	})
+		      	.error(function (data, status, headers, config) {
+		        	console.log(data);
+		      	});
+			console.log(id)
+		}
+		getNews();
+		// $http.get('/api/news')
+		// 	.success(function(data){
+		// 		$scope.news=data;
+		// 		console.log(data);
+		// 	})
+		// 	.error(function(data){
+		// 		console.log(data);
+		// 	});
 	}]);

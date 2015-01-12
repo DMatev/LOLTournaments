@@ -178,6 +178,16 @@ angular.module('AdminController',[])
 	  		});
 	  };
 
+	  $scope.endTournament=function(tournamentName){
+	  	$http.put('/api/tournaments/name/'+tournamentName+'/end')
+	  		.success(function(data){
+	  			console.log(data);
+	  		})
+	  		.error(function(data){
+	  			console.log(data);
+	  		});
+	  };
+
 	  	function getAllTournaments(){
 			$http.get('/api/tournaments')
 				.success(function(data){

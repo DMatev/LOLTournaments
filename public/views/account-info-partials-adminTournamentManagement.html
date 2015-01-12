@@ -9,39 +9,55 @@
 	      <div ng-repeat="team in tournament.teams">
 	      	{{team.name}}
 	      </div>
-	      <h5>Current stage:</h5>
-	      <div class="row" ng-repeat="match in tournament.currentStage.matches">
-	      	<div class="col-lg-6 col-lg-offset-2">
-	      		<div class="btn-group">
-	      			<label 
-	      			ng-click="resolveMatch(tournament.name.original,match._id,0)" 
-	      			ng-class="{'btn btn-default':match.winner===2,
-	      						'btn btn-success':match.winner===0,
-	      						'btn btn-danger':match.winner===1}" 
-	      			ng-model="stageResults[$index]" 
-	      			btn-radio="'0'">
-	      				{{match.team1}}
-	      			</label>
-	      			<label 
-	      			ng-click="resolveMatch(tournament.name.original,match._id,1)"
-	      			ng-class="{'btn btn-default':match.winner===2,
-	      						'btn btn-success':match.winner===1,
-	      						'btn btn-danger':match.winner===0}"
-	      			ng-model="stageResults[$index]"
-	      			btn-radio="'1'">
-	      				{{match.team2}}
-	      			</label>
-	      		</div>
-	      	</div>
+
+	      <!--if tournament is over-->
+	      <div ng-if="!tournament.stage.isOver">
+	      		<h5>Current stage:</h5>
+		      <div class="row" ng-repeat="match in tournament.currentStage.matches">
+		      	<div class="col-lg-6 col-lg-offset-2">
+		      		<div class="btn-group">
+		      			<label 
+		      			ng-click="resolveMatch(tournament.name.original,match._id,0)" 
+		      			ng-class="{'btn btn-default':match.winner===2,
+		      						'btn btn-success':match.winner===0,
+		      						'btn btn-danger':match.winner===1}" 
+		      			ng-model="stageResults[$index]" 
+		      			btn-radio="'0'">
+		      				{{match.team1}}
+		      			</label>
+		      			<label 
+		      			ng-click="resolveMatch(tournament.name.original,match._id,1)"
+		      			ng-class="{'btn btn-default':match.winner===2,
+		      						'btn btn-success':match.winner===1,
+		      						'btn btn-danger':match.winner===0}"
+		      			ng-model="stageResults[$index]"
+		      			btn-radio="'1'">
+		      				{{match.team2}}
+		      			</label>
+		      		</div>
+		      	</div>
+		      </div>
+		      <button ng-show="!tournament.stage.isRunning" class="btn btn-primary" 
+		      ng-click="startTournament(tournament.name.original)">
+		      	start tournament
+		      </button>
+		      <!--end stage if matches<1-->
+		      <button ng-show="tournament.stage.isRunning && tournament.currentStage.matches.length>1" class="btn btn-danger"
+		      ng-click="endStageTournament(tournament.name.original)">
+		      end Stage
+		  	</button>
+		  	<button ng-show="tournament.stage.isRunning && tournament.currentStage.matches.length===1" class="btn btn-danger"
+		      ng-click="endTournament(tournament.name.original)">
+		      end Tournament
+		  	</button>
 	      </div>
-	      <button ng-show="!tournament.stage.isRunning" class="btn btn-primary" 
-	      ng-click="startTournament(tournament.name.original)">
-	      	start tournament
-	      </button>
-	      <button ng-show="tournament.stage.isRunning" class="btn btn-danger"
-	      ng-click="endStageTournament(tournament.name.original)">
-	      end Stage
-	  	</button>
+
+	      <!--if tournament is over display participants and winner?-->
+	      <div ng-if="tournament.stage.isOver">
+	      	<b>
+	      		winner:{{tournament.currentStage.matches[0].winner===0?(tournament.currentStage.matches[0].team1):(tournament.currentStage.matches[0].team2)}}
+	      	</b>
+	      </div>
 	    </accordion-group>
 	</accordion>
 </div>

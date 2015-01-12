@@ -31,12 +31,5 @@ angular.module('NewsController',[])
 			console.log(id)
 		}
 		getNews();
-		// $http.get('/api/news')
-		// 	.success(function(data){
-		// 		$scope.news=data;
-		// 		console.log(data);
-		// 	})
-		// 	.error(function(data){
-		// 		console.log(data);
-		// 	});
+		
 	}]);

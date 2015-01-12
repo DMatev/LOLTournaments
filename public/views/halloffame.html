@@ -1,0 +1,15 @@
+<div class="container">
+	<h1>Hall Of Fame</h1>
+    <div class="jumbotron" ng-controller="HallOfFameCtrl">
+        <h3>Hall Of Fame</h3>
+        <div>
+			<table class="table table-striped">
+				<th>Team</th><th>Tournament</th>
+				<tr ng-repeat="record in hallOfFame">
+				    <td class="col-md-5">{{record.team}}</td>
+				    <td class="col-md-5">{{record.tournament}}</td>
+				</tr>						
+	      	</table>
+	  	</div>
+    </div>
+</div>   

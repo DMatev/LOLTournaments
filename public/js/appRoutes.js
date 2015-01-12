@@ -8,6 +8,10 @@ angular.module('appRoutes',[])
           url:'/',
           templateUrl:'views/main.html'
         })
+        .state('halloffame',{
+          url:'/halloffame',
+          templateUrl:'views/halloffame.html'
+        })
         .state('account',{
           /*resolve:{
             'U':['$http',function($http){

@@ -1,3 +1,4 @@
+<p ng-show="errorCreateTournament" class="text-danger">{{errorCreateTournament.message}}</p>
 <h4>Create new tournament</h4>
 <form id="tournamentForm" ng-submit="createTournament()">
   <p><input ng-model="tournamentForm.tournamentName" type="text" name="team" placeholder="name of the tournament" /></p>

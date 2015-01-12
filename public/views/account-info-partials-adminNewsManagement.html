@@ -25,6 +25,8 @@
 	</accordion>
 </div>
 
+<p ng-show="errorNews" class="text-danger">{{errorNews.message}}</p>
+
 <!--edit news-->
 <div ng-show="newsEditForm.visible" class="col-lg-6">
 	<h5>Edit news</h5>

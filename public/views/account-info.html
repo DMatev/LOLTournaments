@@ -7,6 +7,7 @@
 
 		<!--USER STUFF-->
 		<div ng-if="user.role==='user'" class="well well-sm" ng-controller="TeamCtrl">
+			<p ng-show="error" class="text-danger">{{error.message}}</p>
 			<div ng-show="!user.team">
 				<h3>You don't have a team</h3>
 				<div class="row">
@@ -27,7 +28,14 @@
 							<div class="row">
 								<div class="col-lg-10 col-lg-offset-1">
 									<team-member-list></team-member-list>
+
 								</div>
+							<div ng-show="myTeam.status==='free'" class="col-lg-5 col-lg-offset-1">
+									<button class="btn btn-danger btn-block" ng-click="leaveTeam()">
+										<span ng-show="user.duty==='player'">leave team</span>
+										<span ng-show="user.duty==='captain'">dismiss team</span>
+									</button>
+									</div>
 							</div>
 							<div class="row">
 								
@@ -39,15 +47,10 @@
 							</div>
 
 						</div>
-						<div class="col-lg-6" ng-if="user.duty==='captain'">
+						<div class="col-lg-6" ng-if="user.duty==='captain' &&  myTeam.status==='free'">
 							<team-request-list></team-request-list>
 						</div>
 					</div>	
-					<div class="row">
-						<button class="btn btn-danger btn-block" ng-click="disbandTeam()">
-							delete team(because you know deep inside of you lies a <i>MEAN</i> mfker)
-						</button>
-					</div>
 			</div>
 		</div>
 

@@ -10,6 +10,7 @@ angular.module('TeamController',[])
 		$scope.selectedTeam;
 		$scope.tournamentList={};
 		$scope.selectedTournament;
+
 		
 
 		function getUserInfo(){
@@ -30,18 +31,21 @@ angular.module('TeamController',[])
 			$http.post('/api/myteam',{name:$scope.teamForm.name})
 				.success(function(data){
 					console.log(data);
+					$scope.error = null;
 					$scope.teamForm={};
 					getUserInfo();
+					getMyTeam();
 				})
 				.error(function(data){
+					$scope.error = data;
 					console.log(data);
 				});
 		};
 
-		$scope.disbandTeam=function(){
+		$scope.leaveTeam=function(){
 			$http.delete('/api/myteam')
 				.success(function(data){
-					console.log(data);
+					$scope.error = null;
 					$scope.teamForm={};
 					getUserInfo();
 					getMyTeam();
@@ -54,9 +58,11 @@ angular.module('TeamController',[])
 
 		$scope.selectTeam=function(id){
 			if($scope.teamList[id].requests.indexOf($scope.user.username)>-1){
-				alert('You have already sent request to that team');
+				$scope.error={};
+				$scope.error.message = 'You have already sent request to that team';
 			}else{
 				$scope.selectedTeam=id;
+				$scope.error = null;
 			}
 		};
 
@@ -64,11 +70,11 @@ angular.module('TeamController',[])
 			$http.post('/api/teams/request',{name:$scope.teamList[$scope.selectedTeam].name.original})
 				.success(function(data){
 					delete $scope.selectedTeam;
+					$scope.error = null;
 					getAllTeams();
-					console.log(data);
 				})
 				.error(function(data){
-					console.log(data);
+					$scope.error=data;
 				});
 		};
 		//STRANGE THINGS R HAPPENING must check
@@ -80,23 +86,23 @@ angular.module('TeamController',[])
 			}
 			$http.put('/api/myteam/requests',{name:name,approved:approved})
 				.success(function(data){
+					$scope.error = null;
 					getMyTeam();
 					getAllRequests();
-					console.log(data);
 				})
 				.error(function(data){
-					console.log(data);
+					$scope.error=data;
 				});
 		};
 		
 		$scope.kickMember=function(member){
 			$http.delete('/api/myteam/member/'+member)
 				.success(function(data){
+					$scope.error = null;
 					getMyTeam();
-					console.log(data);
 				})
 				.error(function(data){
-					console.log(data);
+					$scope.error=data;
 				});
 		};
 
@@ -108,9 +114,12 @@ angular.module('TeamController',[])
 			$http.post('/api/myteam/tournament',{name:selectedTournament.name.original})
 				.success(function(data){
 					console.log(data);
+					getMyTeam();
+					$scope.error = null;
 				})
 				.error(function(data){
 					console.log(data);
+					$scope.error = data;
 				});
 		};
 

@@ -25,7 +25,7 @@ function signin(data, next){
 	              if(!user.validPassword(data.password)){
 	                return next({ status: 401, content: { code: 5, description: 'wrong password', message: 'Oops! Wrong password' } });
 	              } else {
-	                return next({ status: 200, content: { token: jwt.sign({ id: user._id }, config.jwtSecret, { expiresInMinutes: 60*5 }) } });
+	                return next({ status: 200, content: { token: jwt.sign({ id: user._id }, config.jwtSecret, { expiresInMinutes: 60*24*30 }) } });
 	              }
 	            }
 	        });
@@ -72,7 +72,7 @@ function signup(data, next){
 	                    if(err){
 	                      return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 	                    } else {
-	                      return next({ status: 200, content: { token: jwt.sign({ id: user._id }, config.jwtSecret, { expiresInMinutes: 60*5 }) } });
+	                      return next({ status: 200, content: { token: jwt.sign({ id: user._id }, config.jwtSecret, { expiresInMinutes: 60*24*30 }) } });
 	                    }
 	                  });
 	                }

@@ -27,6 +27,8 @@ angular.module('AdminController',[])
 	  		.success(function(data){
 	  			console.log(data);
 	  			getNews();
+	  			$scope.newsForm.title=null;
+	  			$scope.newsForm.content=null;
 	  		})
 	  		.error(function(data){
 	  			console.log(data);
@@ -82,6 +84,8 @@ angular.module('AdminController',[])
 	  		.success(function(data){
 	  			console.log(data);
 	  			getHallOfFame();
+	  			$scope.hallOfFameForm.team=null;
+	  			$scope.hallOfFameForm.tournament=null;
 	  		})
 	  		.error(function(data){
 	  			console.log(data);
@@ -125,6 +129,7 @@ angular.module('AdminController',[])
 	  		numberOfCompetitors:$scope.tournamentForm.tournamentParticipantsNumber})
 	  		.success(function(data){
 	  			console.log(data);
+	  			getAllTournaments();
 	  		})
 	  		.error(function(data){
 	  			console.log(data);

@@ -40,7 +40,7 @@
               </div>
 
               <ul class="navbar navbar-nav navbar-right">
-                  <li><a ui-sref="account"><i class="fa fa-sign-in">Account</i></a></li>
+                  <li><a ui-sref="account"><i class="fa fa-sign-in">{{user.username?user.username:'Account'}}</i></a></li>
                   <li><a ng-hide="!isAuthenticated" href="" ng-click="logout()"><i class="fa fa-sign-out">Log out</i></a></li>
               </ul>
           </div>

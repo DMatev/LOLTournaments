@@ -1,5 +1,4 @@
-<!--STRANGE STUFF koito dido iska-->      
- <div class="container">
+   <div class="container">
 	<h1>Home Page</h1>
 	<div class="jumbotron" ng-hide="isAuthenticated" ng-controller="NewsCtrl">
         <h3>News</h3>
@@ -18,14 +17,6 @@
                 </accordion>
             </accordion-group>
         </accordion>
-    </div>
-
-    <div class="jumbotron" ng-show="isAuthenticated">
-        <div class="row">
-        	 <p>{{welcome}}</p>
-        	<button class="btn btn-primary" ng-click="sendAwesomeAjax()">awesome ajax</button>
-        	<div>{{message}}</div>
-        </div>
     </div>
 
     <div class="jumbotron" ng-show="isAuthenticated" ng-controller="NewsCtrl">

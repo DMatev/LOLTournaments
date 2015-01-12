@@ -4,7 +4,6 @@ angular.module('TournamentsController',[])
 		$scope.tournaments=[];
 		$http.get('/api/tournaments')
 			.success(function(data){
-				console.log(data);
 				$scope.tournaments=data;
 			})
 			.error(function(data){

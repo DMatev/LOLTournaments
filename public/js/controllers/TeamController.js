@@ -21,7 +21,6 @@ angular.module('TeamController',[])
 
 	          })
 	          .error(function (data) {
-	            console.log(data);
 	            $scope.isAuthenticated = false;
 	            delete $window.sessionStorage.token;
 	          });
@@ -30,7 +29,6 @@ angular.module('TeamController',[])
 		$scope.createTeam=function(){
 			$http.post('/api/myteam',{name:$scope.teamForm.name})
 				.success(function(data){
-					console.log(data);
 					$scope.error = null;
 					$scope.teamForm={};
 					getUserInfo();
@@ -38,7 +36,6 @@ angular.module('TeamController',[])
 				})
 				.error(function(data){
 					$scope.error = data;
-					console.log(data);
 				});
 		};
 
@@ -52,7 +49,7 @@ angular.module('TeamController',[])
 					getAllTeams();
 				})
 				.error(function(data){
-					console.log(data);
+					$scope.error = data;
 				});
 		};
 
@@ -113,12 +110,10 @@ angular.module('TeamController',[])
 		$scope.joinTournament=function(selectedTournament){
 			$http.post('/api/myteam/tournament',{name:selectedTournament.name.original})
 				.success(function(data){
-					console.log(data);
-					getMyTeam();
 					$scope.error = null;
+					getMyTeam();
 				})
 				.error(function(data){
-					console.log(data);
 					$scope.error = data;
 				});
 		};
@@ -131,7 +126,6 @@ angular.module('TeamController',[])
 			$http.get('/api/teams')
 				.success(function(data){
 					$scope.teamList=data;
-					console.log(data);
 				})
 				.error(function(data){
 					console.log(data);
@@ -144,7 +138,6 @@ angular.module('TeamController',[])
 			$http.get('/api/tournaments')
 				.success(function(data){
 					$scope.tournamentList=data;
-					console.log(data);
 				})
 				.error(function(data){
 					console.log(data);
@@ -158,7 +151,6 @@ angular.module('TeamController',[])
 			//$http.get('/api/teams/name/'+$scope.user.team)
 				.success(function(data){
 					$scope.myTeam=data;
-					console.log(data);
 				})
 				.error(function(data){
 					console.log(data);
@@ -171,7 +163,6 @@ angular.module('TeamController',[])
 			$http.get('/api/myteam/requests')
 				.success(function(data){
 					$scope.requestsList=data;
-					console.log(data);
 				})
 				.error(function(data){
 					console.log(data);

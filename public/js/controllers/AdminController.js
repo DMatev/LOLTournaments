@@ -23,7 +23,6 @@ angular.module('AdminController',[])
 	  $scope.hallOfFameList={};
 
 	  $scope.createNews=function(){
-	  	console.log($scope.newsForm);
 	  	$http.post('/api/news',{title:$scope.newsForm.title,content:$scope.newsForm.content})
 	  		.success(function(data){
 	  			$scope.errorNews=null;
@@ -76,7 +75,6 @@ angular.module('AdminController',[])
 	  };	
 
 	  $scope.createHallOfFameRecord=function(){
-	  	console.log($scope.hallOfFameForm);
 	  	$http.post('/api/halloffame',{team:$scope.hallOfFameForm.team,tournament:$scope.hallOfFameForm.tournament})
 	  		.success(function(data){
 	  			$scope.errorHallOfFame=null;
@@ -106,7 +104,6 @@ angular.module('AdminController',[])
 		};
 
 		$scope.editHallOfFameRecord=function(){
-			console.log('opa');
 		  	$http.put('/api/halloffame/'+$scope.hallOfFameEditForm.selected,
 		  		{team:$scope.hallOfFameEditForm.team,tournament:$scope.hallOfFameEditForm.tournament})
 		  		.success(function(data){
@@ -137,9 +134,10 @@ angular.module('AdminController',[])
 	  $scope.startTournament=function(tournamentName){
 	  	$http.put('/api/tournaments/name/'+tournamentName+'/start')
 	  		.success(function(data){
-	  			console.log(data);
+	  			$scope.errorTournaments=null;
+	  			getAllTournaments();
 	  		}).error(function(data){
-	  			console.log(data);
+	  			$scope.errorTournaments=data;
 	  		});
 	  };
 
@@ -148,38 +146,39 @@ angular.module('AdminController',[])
 	  	$http.put('/api/tournaments/name/'+tournamentName+'/match/'+matchId,
 	  		{winner:resolvedWinner})
 	  		.success(function(data){
+	  			$scope.errorTournaments=null;
 	  			getAllTournaments();
-	  			console.log(data);
 	  		})
 	  		.error(function(data){
-	  			console.log(data);
+	  			$scope.errorTournaments=data;
 	  		});
 	  };
 
 	  $scope.endStageTournament=function(tournamentName){
-	  	$http.put('/api/tournaments/name/'+tournamentName+'/stage/resolve')
+	  	$http
+	  	.put('/api/tournaments/name/'+tournamentName+'/stage/resolve')
 	  		.success(function(data){
-	  			console.log(data);
+	  			$scope.errorTournaments=null;
 	  			$http.put('/api/tournaments/name/'+tournamentName+'/stage/end')
 	  				.success(function(data){
-	  					console.log(data);
+	  					$scope.errorTournaments=null;
 	  				})
 	  				.error(function(data){
-	  					console.log(data);
+	  					$scope.errorTournaments=data;
 	  				});
 	  		})
 	  		.error(function(data){
-	  			console.log(data);
+	  			$scope.errorTournaments=data;
 	  		});
 	  };
 
 	  $scope.endTournament=function(tournamentName){
 	  	$http.put('/api/tournaments/name/'+tournamentName+'/end')
 	  		.success(function(data){
-	  			console.log(data);
+	  			$scope.errorTournaments=null;
 	  		})
 	  		.error(function(data){
-	  			console.log(data);
+	  			$scope.errorTournaments=data;
 	  		});
 	  };
 
@@ -187,7 +186,6 @@ angular.module('AdminController',[])
 			$http.get('/api/tournaments')
 				.success(function(data){
 					$scope.tournamentList=data;
-					console.log(data);
 				})
 				.error(function(data){
 					console.log(data);
@@ -198,7 +196,6 @@ angular.module('AdminController',[])
 			$http.get('/api/news')
 				.success(function(data){
 					$scope.newsList=data;
-					console.log(data);
 				})
 				.error(function(data){
 					console.log(data);
@@ -209,7 +206,6 @@ angular.module('AdminController',[])
 			$http.get('/halloffame')
 				.success(function(data){
 					$scope.hallOfFameList=data;
-					console.log(data);
 				})
 				.error(function(data){
 					console.log(data);
@@ -227,9 +223,9 @@ angular.module('AdminController',[])
 		$scope.startTournament=function(tournamentName){
 		  	$http.put('/api/tournaments/name/'+tournamentName+'/start')
 		  		.success(function(data){
-		  			console.log(data);
+		  			$scope.errorTournaments=null;
 		  		}).error(function(data){
-		  			console.log(data);
+		  			$scope.errorTournaments=data;
 		  		});
 		  };
 	}])
@@ -237,12 +233,4 @@ angular.module('AdminController',[])
 		
 		$scope.oneAtATime=true;
 		
-		// $scope.startTournament=function(tournamentName){
-		//   	$http.put('/api/tournaments/name/'+tournamentName+'/start')
-		//   		.success(function(data){
-		//   			console.log(data);
-		//   		}).error(function(data){
-		//   			console.log(data);
-		//   		});
-		//   };
 	}]);

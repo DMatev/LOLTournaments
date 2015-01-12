@@ -17,7 +17,6 @@ angular.module('AuthenticationController', [])
           $http
             .get('/api/userinfo') 
             .success(function (data, status, headers, config) {
-              //console.log(data);
               $scope.user = {username: data.username, email: data.email, role: data.role, duty: data.duty, team: data.team};
               $scope.welcome = 'Welcome, ' +  $scope.user.username;
               $scope.isAuthenticated = true;
@@ -25,7 +24,6 @@ angular.module('AuthenticationController', [])
               
             })
             .error(function (data, status, headers, config) {
-              //console.log(data);
               $scope.isAuthenticated = false;
               delete $window.sessionStorage.token;
             });
@@ -57,7 +55,6 @@ angular.module('AuthenticationController', [])
           $http
             .get('/api/userinfo') 
             .success(function (data, status, headers, config) {
-              //console.log(data);
               $scope.user = {username: data.username, email: data.email, role: data.role, duty: data.duty, team: data.team};
               $scope.welcome = 'Welcome, ' +  $scope.user.username;
               $scope.isAuthenticated = true;
@@ -65,7 +62,6 @@ angular.module('AuthenticationController', [])
               
             })
             .error(function (data, status, headers, config) {
-              //console.log(data);
               $scope.isAuthenticated = false;
               delete $window.sessionStorage.token;
             });
@@ -115,36 +111,13 @@ angular.module('AuthenticationController', [])
       $http
         .post('/recovery/change', {username: $scope.user.username, password: $scope.user.password, recoveryCode: $scope.user.recoveryCode})
         .success(function (data, status, headers, config) {
-          console.log(data);
           $scope.errorRecoveryChange = null;
           $scope.successMessage = data;
         })
         .error(function (data, status, headers, config) {
-          console.log(data);
           $scope.successMessage = null;
           $scope.errorRecoveryChange = data;
         })
-    };
-
-    $scope.sendAwesomeAjax = function () {
-      // $http({url: '/api/teams', method: 'GET', params: {name: 'ChobanitE'}})
-      // .success(function (data, status, headers, config) {
-      //   console.log(data);
-      // })
-      // .error(function (data, status, headers, config) {
-      //   console.log(status);
-      //   console.log(data);
-      // });
-      
-      $http
-      //.get('/api/tournaments') 
-      .post('/api/news/54b3232e9d5cdfc01735703b/comment', {content: '3'})
-      .success(function (data, status, headers, config) {
-        console.log(data);
-      })
-      .error(function (data, status, headers, config) {
-        console.log(data);
-      });
     };
     
     function init(){
@@ -152,13 +125,11 @@ angular.module('AuthenticationController', [])
         $http
           .get('/api/userinfo') 
           .success(function (data, status, headers, config) {
-            console.log(data);
             $scope.isAuthenticated = true;
             $scope.user = {username: data.username, email: data.email, role: data.role, duty: data.duty, team: data.team};
 
           })
           .error(function (data, status, headers, config) {
-            console.log(data);
             $scope.isAuthenticated = false;
             delete $window.sessionStorage.token;
           });
@@ -170,12 +141,10 @@ angular.module('AuthenticationController', [])
               $http
                 .get('/api/userinfo') 
                 .success(function (data, status, headers, config) {
-                  console.log(data);
                   $scope.isAuthenticated = true;
                   $scope.user = {username: data.username, email: data.email, role: data.role, duty: data.duty, team: data.team};
                 })
                 .error(function (data, status, headers, config) {
-                  console.log(data);
                   $scope.isAuthenticated = false;
                   delete $window.sessionStorage.token;
                 });

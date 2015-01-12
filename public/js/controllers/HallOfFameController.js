@@ -9,7 +9,6 @@ angular.module('HallOfFameController',[])
 			$http.get('/halloffame')
 				.success(function(data){
 					$scope.hallOfFame=data;
-					console.log(data);
 				})
 				.error(function(data){
 					console.log(data);

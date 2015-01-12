@@ -38,7 +38,7 @@
               <div class="navbar-header">
                   <a class="navbar-brand" ui-sref="home">Home</a>
                   <a class="navbar-brand" ui-sref="halloffame">Hall Of Fame</a>
-                  <a class="navbar-brand" ui-sref="tournaments">Tournaments</a>    
+                  <a class="navbar-brand" ng-hide="!isAuthenticated" ui-sref="tournaments">Tournaments</a>    
               </div>
 
 

@@ -1,5 +1,8 @@
-<h4>Existing tournaments:</h4>
+<p ng-show="errorTournaments" class="text-danger">{{errorTournaments.message}}</p>
+
 <div ng-controller="accordionTournaments">
+	<p ng-show="errorTournaments" class="text-danger">{{errorTournaments.message}}</p>
+	<h4>Existing tournaments:</h4>
 	<accordion close-others="oneAtATime">
 		<accordion-group ng-repeat="tournament in tournamentList"
 		heading="{{tournament.name.original}} {{tournament.teams.length}}/{{tournament.numberOfCompetitors}}" ng-class="{'blueaccordion':tournament.stage.isRunning}">

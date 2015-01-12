@@ -10,7 +10,6 @@ angular.module('NewsController',[])
 			$http.get('/news')
 				.success(function(data){
 					$scope.news=data;
-					console.log(data);
 				})
 				.error(function(data){
 					console.log(data);
@@ -21,15 +20,14 @@ angular.module('NewsController',[])
 			$http
 			.post('/api/news/'+id+'/comment', {content: $scope.commentsForm.title})
 		     	.success(function (data, status, headers, config) {
-		     		console.log(data);
 		     		getNews();
 		     		$scope.commentsForm.title=null;
 		      	})
 		      	.error(function (data, status, headers, config) {
 		        	console.log(data);
 		      	});
-			console.log(id)
 		}
+		
 		getNews();
 		
 	}]);

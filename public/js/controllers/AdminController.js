@@ -26,28 +26,26 @@ angular.module('AdminController',[])
 	  	console.log($scope.newsForm);
 	  	$http.post('/api/news',{title:$scope.newsForm.title,content:$scope.newsForm.content})
 	  		.success(function(data){
-	  			console.log(data);
-	  			getNews();
+	  			$scope.errorNews=null;
 	  			$scope.newsForm.title=null;
 	  			$scope.newsForm.content=null;
+	  			getNews();
 	  		})
 	  		.error(function(data){
-	  			console.log(data);
+	  			$scope.errorNews=data;
 	  		});
 	  };
 
  	  $scope.deleteNews=function(id){
 	  	$http.delete('/api/news/'+id)
 	  		.success(function(data){
-	  			console.log(data);
 	  			getNews();
 	  		})
 	  		.error(function(data){
-	  			console.log(data);
+	  			getNews();
 	  		});
 	  };
 		$scope.editNews=function(news){
-			console.log(news);
 			$scope.newsEditForm.visible=true;
 			$scope.newsEditForm.selected=news._id;
 			$scope.newsEditForm.title=news.title;
@@ -55,27 +53,25 @@ angular.module('AdminController',[])
 		};
 
 		$scope.editThisNews=function(){
-			console.log('opa');
 		  	$http.put('/api/news/'+$scope.newsEditForm.selected,
 		  		{title:$scope.newsEditForm.title,content:$scope.newsEditForm.content})
 		  		.success(function(data){
-		  			console.log(data);
+		  			$scope.errorNews=null;
 		  			$scope.newsEditForm.visible=false;
 		  			getNews();
 		  		})
 		  		.error(function(data){
-		  			console.log(data);
+		  			$scope.errorNews=data;
 		  		});
 	  	};
 
  	  $scope.deleteComment=function(nid,cid){
 	  	$http.delete('/api/news/'+nid+'/comment/'+cid)
 	  		.success(function(data){
-	  			console.log(data);
 	  			getNews();
 	  		})
 	  		.error(function(data){
-	  			console.log(data);
+	  			getNews();
 	  		});
 	  };	
 
@@ -83,24 +79,23 @@ angular.module('AdminController',[])
 	  	console.log($scope.hallOfFameForm);
 	  	$http.post('/api/halloffame',{team:$scope.hallOfFameForm.team,tournament:$scope.hallOfFameForm.tournament})
 	  		.success(function(data){
-	  			console.log(data);
-	  			getHallOfFame();
+	  			$scope.errorHallOfFame=null;
 	  			$scope.hallOfFameForm.team=null;
 	  			$scope.hallOfFameForm.tournament=null;
+	  			getHallOfFame();
 	  		})
 	  		.error(function(data){
-	  			console.log(data);
+	  			$scope.errorHallOfFame=data;
 	  		});
 	  };
 
 	  $scope.deleteHallOfFameRecord=function(id){
 	  	$http.delete('/api/halloffame/'+id)
 	  		.success(function(data){
-	  			console.log(data);
 	  			getHallOfFame();
 	  		})
 	  		.error(function(data){
-	  			console.log(data);
+	  			getHallOfFame();
 	  		});
 	  };
 		$scope.editHallOfFame=function(record){
@@ -115,12 +110,12 @@ angular.module('AdminController',[])
 		  	$http.put('/api/halloffame/'+$scope.hallOfFameEditForm.selected,
 		  		{team:$scope.hallOfFameEditForm.team,tournament:$scope.hallOfFameEditForm.tournament})
 		  		.success(function(data){
-		  			console.log(data);
+		  			$scope.errorHallOfFame=null;
 		  			$scope.hallOfFameEditForm.visible=false;
 		  			getHallOfFame();
 		  		})
 		  		.error(function(data){
-		  			console.log(data);
+		  			$scope.errorHallOfFame=data;
 		  		});
 	  	};
 	  ///
@@ -131,11 +126,11 @@ angular.module('AdminController',[])
 	  		name:$scope.tournamentForm.tournamentName,
 	  		numberOfCompetitors:$scope.tournamentForm.tournamentParticipantsNumber})
 	  		.success(function(data){
-	  			console.log(data);
+	  			$scope.errorCreateTournament=null;
 	  			getAllTournaments();
 	  		})
 	  		.error(function(data){
-	  			console.log(data);
+	  			$scope.errorCreateTournament=data;
 	  		});
 	  };
 

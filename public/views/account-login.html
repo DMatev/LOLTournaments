@@ -1,6 +1,8 @@
 <div class="container">
   <div class="row">
-    <div class="col-lg-5">
+
+    <h3 ng-show="recovery">{{successMessage}}</h3>
+    <div ng-show="!recovery" class="col-lg-5">
         <div class="panel panel-primary">
           <div class="panel-heading">
             <h3 class="panel-title">Login</h3>
@@ -13,19 +15,33 @@
               <button type="submit" class="btn btn-primary">Login</button>
               <div>
                 <input type="checkbox" ng-model="rememberMe" ng-init="rememberMe=true"> Keep me logged in
+                <a href ng-click="toogleRecovery()">Forgotten password?</a>
               </div>
-              
             </form>
           </div>
         </div>
       </div>
 
+      <div ng-show="recovery" class="col-lg-4">
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">Ask for Recovery code</h3>
+            </div>
+            <div class="panel-body">
+              <form ng-show="!isAuthenticated" ng-submit="recoveryRequest()">
+                <p ng-show="errorRecoveryRequest" class="text-danger">{{errorRecoveryRequest.message}}</p>
+                <input ng-model="user.username" type="text" name="user" placeholder="Username" />
+                <button type="submit" class="btn btn-info">Send email</button>
+              </form>
+            </div>
+          </div>
+      </div>
 
       <div class="col-lg-1">
         <i class="fa fa-bolt fa-5x"></i>
       </div>
 
-      <div class="col-lg-6">
+      <div ng-show="!recovery" class="col-lg-6">
           <div class="panel panel-info">
             <div class="panel-heading">
               <h3 class="panel-title">Signup</h3>
@@ -41,6 +57,26 @@
             </div>
           </div>
       </div>
+
+      <div ng-show="recovery" class="col-lg-7">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title">Change password</h3>
+          </div>
+          <div class="panel-body">
+            <form ng-show="!isAuthenticated" ng-submit="recoveryChange()">
+              <p ng-show="errorRecoveryChange" class="text-danger">{{errorRecoveryChange.message}}</p>
+              <input ng-model="user.username" type="text" name="user" placeholder="Username" />
+              <input ng-model="user.password" type="password" name="pass" placeholder="New Password" />
+              <input ng-model="user.recoveryCode" type="text" name="recoveryCode" placeholder="Recovery code" />
+              <button type="submit" class="btn btn-primary">Change password</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <a ng-show="recovery" href ng-click="toogleRecovery()">Back to login</a>
+
   </div>
   
 </div> 

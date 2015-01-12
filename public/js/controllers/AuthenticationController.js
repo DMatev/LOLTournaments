@@ -5,6 +5,7 @@ angular.module('AuthenticationController', [])
     $scope.isAuthenticated = false;
     $scope.welcome = '';
     $scope.message = '';
+    $scope.recovery = null;
 
     $scope.signin = function (rememberMe) {
       $http
@@ -16,7 +17,7 @@ angular.module('AuthenticationController', [])
           $http
             .get('/api/userinfo') 
             .success(function (data, status, headers, config) {
-              console.log(data);
+              //console.log(data);
               $scope.user = {username: data.username, email: data.email, role: data.role, duty: data.duty, team: data.team};
               $scope.welcome = 'Welcome, ' +  $scope.user.username;
               $scope.isAuthenticated = true;
@@ -24,15 +25,16 @@ angular.module('AuthenticationController', [])
               
             })
             .error(function (data, status, headers, config) {
-              console.log(data);
+              //console.log(data);
               $scope.isAuthenticated = false;
               delete $window.sessionStorage.token;
             });
-            if(rememberMe){
-              if(typeof Storage !== 'undefined'){
-                localStorage.setItem('token', data.token); // Store
-              }
+
+          if(rememberMe){
+            if(typeof Storage !== 'undefined'){
+              localStorage.setItem('token', data.token); // Store
             }
+          }
 
         })
         .error(function (data, status, headers, config) {
@@ -55,7 +57,7 @@ angular.module('AuthenticationController', [])
           $http
             .get('/api/userinfo') 
             .success(function (data, status, headers, config) {
-              console.log(data);
+              //console.log(data);
               $scope.user = {username: data.username, email: data.email, role: data.role, duty: data.duty, team: data.team};
               $scope.welcome = 'Welcome, ' +  $scope.user.username;
               $scope.isAuthenticated = true;
@@ -63,7 +65,7 @@ angular.module('AuthenticationController', [])
               
             })
             .error(function (data, status, headers, config) {
-              console.log(data);
+              //console.log(data);
               $scope.isAuthenticated = false;
               delete $window.sessionStorage.token;
             });
@@ -89,6 +91,39 @@ angular.module('AuthenticationController', [])
       if (typeof Storage !== 'undefined'){
         localStorage.clear();
       }
+    };
+
+    $scope.toogleRecovery = function(){
+      $scope.recovery = !$scope.recovery;
+      $scope.successMessage = null;
+    };
+
+    $scope.recoveryRequest = function (){
+      $http
+        .post('/recovery/request', {username: $scope.user.username})
+        .success(function (data, status, headers, config) {
+          $scope.errorRecoveryRequest = null;
+          $scope.successMessage = data;
+        })
+        .error(function (data, status, headers, config) {
+          $scope.successMessage = null;
+          $scope.errorRecoveryRequest = data;
+        })
+    };
+
+    $scope.recoveryChange = function (){
+      $http
+        .post('/recovery/change', {username: $scope.user.username, password: $scope.user.password, recoveryCode: $scope.user.recoveryCode})
+        .success(function (data, status, headers, config) {
+          console.log(data);
+          $scope.errorRecoveryChange = null;
+          $scope.successMessage = data;
+        })
+        .error(function (data, status, headers, config) {
+          console.log(data);
+          $scope.successMessage = null;
+          $scope.errorRecoveryChange = data;
+        })
     };
 
     $scope.sendAwesomeAjax = function () {

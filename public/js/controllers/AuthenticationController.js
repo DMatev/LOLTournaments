@@ -11,6 +11,7 @@ angular.module('AuthenticationController', [])
         .post('/signin', $scope.user) 
         .success(function (data, status, headers, config) {
           $window.sessionStorage.token = data.token;
+          $scope.errorSignin = null;
         
           $http
             .get('/api/userinfo') 
@@ -39,7 +40,7 @@ angular.module('AuthenticationController', [])
           delete $window.sessionStorage.token;
           $scope.isAuthenticated = false;
           // Handle login errors here
-          $scope.error = data;
+          $scope.errorSignin = data;
           $scope.welcome = '';
         });
     };
@@ -49,7 +50,8 @@ angular.module('AuthenticationController', [])
         .post('/signup', {username: $scope.user.username, password: $scope.user.password, email: $scope.user.email}) //.post('/signup', $scope.user) .post('/signin', $scope.user) 
         .success(function (data, status, headers, config) {
           $window.sessionStorage.token = data.token;
-        
+          $scope.errorSignup = null;
+
           $http
             .get('/api/userinfo') 
             .success(function (data, status, headers, config) {
@@ -73,7 +75,7 @@ angular.module('AuthenticationController', [])
           delete $window.sessionStorage.token;
           $scope.isAuthenticated = false;
           // Handle login errors here
-          $scope.error = data;
+          $scope.errorSignup = data;
           $scope.welcome = '';
         });
     };

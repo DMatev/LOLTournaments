@@ -7,6 +7,7 @@
           </div>
           <div class="panel-body">
             <form ng-show="!isAuthenticated" ng-submit="signin(rememberMe)">
+              <p ng-show="errorSignin" class="text-danger">{{errorSignin.message}}</p>
               <input ng-model="user.username" type="text" name="user" placeholder="Username" />
               <input ng-model="user.password" type="password" name="pass" placeholder="Password" />
               <button type="submit" class="btn btn-primary">Login</button>
@@ -31,6 +32,7 @@
             </div>
             <div class="panel-body">
               <form ng-show="!isAuthenticated" ng-submit="signup()">
+                <p ng-show="errorSignup" class="text-danger">{{errorSignup.message}}</p>
                 <input ng-model="user.username" type="text" name="user" placeholder="Username" />
                 <input ng-model="user.password" type="password" name="pass" placeholder="Password" />
                 <input ng-model="user.email" type="text" name="email" placeholder="Email" />
@@ -41,7 +43,5 @@
       </div>
   </div>
   
-
-   <span>{{error}}</span>
 </div> 
 

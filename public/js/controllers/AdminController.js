@@ -4,6 +4,7 @@ angular.module('AdminController',[])
 	  $scope.users = [];
 	  $scope.tournamentForm={};
 	  $scope.tournamentList={};
+	  $scope.stageResults=[];
 
 	  $scope.newsEditForm={
 	  	visible: false,
@@ -122,7 +123,9 @@ angular.module('AdminController',[])
 		  			console.log(data);
 		  		});
 	  	};
-
+	  ///
+	  /// TOURNAMENTs functions
+	  ///
 	  $scope.createTournament=function(){
 	  	$http.post('/api/tournaments',{
 	  		name:$scope.tournamentForm.tournamentName,
@@ -141,6 +144,29 @@ angular.module('AdminController',[])
 	  		.success(function(data){
 	  			console.log(data);
 	  		}).error(function(data){
+	  			console.log(data);
+	  		});
+	  };
+
+	  $scope.resolveMatch=function(tournamentName,matchId,resolvedWinner){
+	  	console.log(tournamentName +' '+ matchId + ' ' +resolvedWinner);
+	  	$http.put('/api/tournaments/name/'+tournamentName+'/match/'+matchId,
+	  		{winner:resolvedWinner})
+	  		.success(function(data){
+	  			getAllTournaments();
+	  			console.log(data);
+	  		})
+	  		.error(function(data){
+	  			console.log(data);
+	  		});
+	  };
+
+	  $scope.endStageTournament=function(tournamentName){
+	  	$http.put('/api/tournaments/name/'+tournamentName+'/stage/resolve')
+	  		.success(function(data){
+	  			console.log(data);
+	  		})
+	  		.error(function(data){
 	  			console.log(data);
 	  		});
 	  };

@@ -13,8 +13,24 @@
 	      <div class="row" ng-repeat="match in tournament.currentStage.matches">
 	      	<div class="col-lg-6 col-lg-offset-2">
 	      		<div class="btn-group">
-	      			<label class="btn btn-default">{{match.team1}}</label>
-	      			<label class="btn btn-default">{{match.team2}}</label>
+	      			<label 
+	      			ng-click="resolveMatch(tournament.name.original,match._id,0)" 
+	      			ng-class="{'btn btn-default':match.winner===2,
+	      						'btn btn-success':match.winner===0,
+	      						'btn btn-danger':match.winner===1}" 
+	      			ng-model="stageResults[$index]" 
+	      			btn-radio="'0'">
+	      				{{match.team1}}
+	      			</label>
+	      			<label 
+	      			ng-click="resolveMatch(tournament.name.original,match._id,1)"
+	      			ng-class="{'btn btn-default':match.winner===2,
+	      						'btn btn-success':match.winner===1,
+	      						'btn btn-danger':match.winner===0}"
+	      			ng-model="stageResults[$index]"
+	      			btn-radio="'1'">
+	      				{{match.team2}}
+	      			</label>
 	      		</div>
 	      	</div>
 	      </div>
@@ -22,7 +38,10 @@
 	      ng-click="startTournament(tournament.name.original)">
 	      	start tournament
 	      </button>
-	      <button ng-show="tournament.stage.isRunning" class="btn btn-danger">Resolve</button>
+	      <button ng-show="tournament.stage.isRunning" class="btn btn-danger"
+	      ng-click="endStageTournament(tournament.name.original)">
+	      end Stage
+	  	</button>
 	    </accordion-group>
 	</accordion>
 </div>

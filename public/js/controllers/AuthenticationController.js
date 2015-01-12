@@ -6,9 +6,9 @@ angular.module('AuthenticationController', [])
     $scope.welcome = '';
     $scope.message = '';
 
-    $scope.signin = function () {
+    $scope.signin = function (rememberMe) {
       $http
-        .post('/signin', $scope.user) //.post('/signup', $scope.user) .post('/signin', $scope.user) 
+        .post('/signin', $scope.user) 
         .success(function (data, status, headers, config) {
           $window.sessionStorage.token = data.token;
         
@@ -27,8 +27,12 @@ angular.module('AuthenticationController', [])
               $scope.isAuthenticated = false;
               delete $window.sessionStorage.token;
             });
-          if (typeof Storage !== 'undefined') 
-            localStorage.setItem('token', data.token); // Store
+            if(rememberMe){
+              if(typeof Storage !== 'undefined'){
+                localStorage.setItem('token', data.token); // Store
+              }
+            }
+
         })
         .error(function (data, status, headers, config) {
           // Erase the token if the user fails to log in
@@ -96,8 +100,7 @@ angular.module('AuthenticationController', [])
       // });
       
       $http
-      //.get('/api/tournaments') 
-      .post('/api/news/54b3082cdecb507c1974ef2f/comment',{content: 'bla bla'})
+      .get('/api/tournaments') 
       .success(function (data, status, headers, config) {
         console.log(data);
       })

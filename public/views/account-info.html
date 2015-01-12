@@ -169,16 +169,16 @@
 
 						<!--show all records from Hall Of Fame-->
 						<div ng-show="hallOfFameList.length>0">
-						<h5>Records</h5>
-						<table class="table table-striped">
-							<th>Team</th><th>Tournament</th><th>Edit</th><th>Remove</th>
-							<tr ng-repeat="record in hallOfFameList">
-							    <td class="col-md-5">{{record.team}}</td>
-							    <td class="col-md-5">{{record.tournament}}</td>
-							    <td class="col-md-1"><span ng-click="editHallOfFame(record)" class="glyphicon glyphicon-pencil"></span></td>
-							    <td class="col-md-1"><span ng-click="deleteHallOfFameRecord(record._id)" class="glyphicon glyphicon-remove"></span></td>
-							</tr>						
-				      	</table>
+							<h5>Records</h5>
+							<table class="table table-striped">
+								<th>Team</th><th>Tournament</th><th>Edit</th><th>Remove</th>
+								<tr ng-repeat="record in hallOfFameList">
+								    <td class="col-md-5">{{record.team}}</td>
+								    <td class="col-md-5">{{record.tournament}}</td>
+								    <td class="col-md-1"><span ng-click="editHallOfFame(record)" class="glyphicon glyphicon-pencil"></span></td>
+								    <td class="col-md-1"><span ng-click="deleteHallOfFameRecord(record._id)" class="glyphicon glyphicon-remove"></span></td>
+								</tr>						
+					      	</table>
 				      	</div>
 
 				    <!--edit record from Hall Of Fame-->

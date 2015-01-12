@@ -19,6 +19,7 @@
     <script src="js/directives/TeamDirectives.js"></script>
     <script src="js/services/UserService.js"></script>
     <script src="js/controllers/NewsController.js"></script>
+    <script src="js/controllers/TournamentsController.js"></script>
     <script src="js/controllers/HallOfFameController.js"></script>
     <script src="js/controllers/TeamController.js"></script>
     <script src="js/controllers/AdminController.js"></script>
@@ -37,9 +38,11 @@
               <div class="navbar-header">
                   <a class="navbar-brand" ui-sref="home">Home</a>
                   <a class="navbar-brand" ui-sref="halloffame">Hall Of Fame</a>
+                  <a class="navbar-brand" ui-sref="tournaments">Tournaments</a>    
               </div>
 
-              <ul class="navbar navbar-nav navbar-right">
+
+              <ul class="nav navbar-nav navbar-right">
                   <li><a ui-sref="account"><i class="fa fa-sign-in">{{user.username?user.username:'Account'}}</i></a></li>
                   <li><a ng-hide="!isAuthenticated" href="" ng-click="logout()"><i class="fa fa-sign-out">Log out</i></a></li>
               </ul>

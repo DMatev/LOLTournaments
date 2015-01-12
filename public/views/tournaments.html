@@ -1,0 +1,39 @@
+<div class="container">
+	<h1>Tournaments</h1>
+    <div class="jumbotron">
+        <div class="well" ng-repeat="tournament in tournaments">
+        	<h2>{{tournament.name.original}} - {{tournament.stage.isOver?'Over':''}}
+        		{{tournament.stage.isRunning?'Running':''}}
+        		{{(tournament.stage.isSigningOpen?'Open for signup':'')}}</h2>
+        	<div class="row" ng-if="!tournament.stage.isSigningOpen">
+        		<div class="col-lg-3" ng-repeat="pastStage in tournament.history">
+	        		<h3>Stage {{$index +1}}</h3>
+	        		<div class="row" ng-repeat="match in pastStage.matches">
+	        			<p> <span ng-class="{'glyphicon glyphicon-plus-sign':match.winner===0,
+	        				'glyphicon glyphicon-minus-sign':match.winner===1}">{{match.team1}}</span>vs
+	        				<span ng-class="{'glyphicon glyphicon-plus-sign':match.winner===1,
+	        				'glyphicon glyphicon-minus-sign':match.winner===0}">{{match.team2}}</span></p>
+	        		</div>
+	        	</div>
+
+	        	<div class="col-lg-3" ng-if="tournament.currentStage.matches.length===1">
+	        		<h3>Final stage</h3>
+	        		<div class="row">tournament.currentStage.matches[0]
+	        			<p> <span ng-class="{'glyphicon glyphicon-plus-sign':tournament.currentStage.matches[0].winner===0,
+	        				'glyphicon glyphicon-minus-sign':tournament.currentStage.matches[0].winner===1}">{{tournament.currentStage.matches[0].team1}}</span>vs
+	        				<span ng-class="{'glyphicon glyphicon-plus-sign':tournament.currentStage.matches[0].winner===1,
+	        				'glyphicon glyphicon-minus-sign':tournament.currentStage.matches[0].winner===0}">{{tournament.currentStage.matches[0].team2}}</span></p>
+	        		</div>
+	        	</div>
+        	</div>
+        	<!--
+			<table class="table table-striped">
+				<th>Team</th><th>Tournament</th>
+				<tr ng-repeat="record in hallOfFame">
+				    <td class="col-md-5">{{record.team}}</td>
+				    <td class="col-md-5">{{record.tournament}}</td>
+				</tr>						
+	      	</table>-->
+	  	</div>
+    </div>
+</div>   

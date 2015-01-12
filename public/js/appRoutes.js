@@ -12,6 +12,11 @@ angular.module('appRoutes',[])
           url:'/halloffame',
           templateUrl:'views/halloffame.html'
         })
+        .state('tournaments',{
+          url:'/tournaments',
+          templateUrl:'views/tournaments.html',
+          controller:'TournamentsCtrl'
+        })
         .state('account',{
           /*resolve:{
             'U':['$http',function($http){

@@ -165,6 +165,13 @@ angular.module('AdminController',[])
 	  	$http.put('/api/tournaments/name/'+tournamentName+'/stage/resolve')
 	  		.success(function(data){
 	  			console.log(data);
+	  			$http.put('/api/tournaments/name/'+tournamentName+'/stage/end')
+	  				.success(function(data){
+	  					console.log(data);
+	  				})
+	  				.error(function(data){
+	  					console.log(data);
+	  				});
 	  		})
 	  		.error(function(data){
 	  			console.log(data);

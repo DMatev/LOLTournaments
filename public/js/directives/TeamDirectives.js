@@ -10,6 +10,11 @@ angular.module('TeamDirectives',[])
 			restrict:'E',
 			templateUrl:'views/account-info-partials-teamRequestList.html'
 		};
+	}).directive('teamTeamCreate',function(){
+		return{
+			restrict:'E',
+			templateUrl:'views/account-info-partials-teamTeamCreate.html'
+		};
 	}).directive('teamTeamsList',function(){
 		return {
 			restrict:'E',

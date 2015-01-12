@@ -1,0 +1,46 @@
+<h4>News</h4>
+<!--show all news-->
+<div ng-controller="accordionNews">
+	<accordion close-others="oneAtATime">
+		<accordion-group ng-repeat="news in newsList"
+		heading="{{news.title}} ">
+	      <p>Title: {{news.title}}</p>
+	      <p>Content: {{news.content}}</p>
+	      <p>Author: {{news.author}}</p>
+	      <accordion ng-show="news.comments.length>0" close-others="oneAtATime">
+		      <accordion-group heading="Comments({{news.comments.length}})">
+			      <ul ng-show="news.comments.length>0" style="list-style-type: none;">	
+					  <li ng-repeat="comment in news.comments">
+					  	<p>Content: {{comment.content}}</p>
+					  	<p>Author: {{comment.author}}</p>
+					  	<p>Post at: {{comment.postDate}}</p>
+					  	<span ng-click="deleteComment(news._id,comment._id)" class="glyphicon glyphicon-remove"></span>
+					  </li>
+			      </ul>
+		      </accordion-group>
+		  </accordion>
+	      <span ng-click="editNews(news)" class="glyphicon glyphicon-pencil"></span>
+	      <span ng-click="deleteNews(news._id)" class="glyphicon glyphicon-remove"></span>
+	    </accordion-group>
+	</accordion>
+</div>
+
+<!--edit news-->
+<div ng-show="newsEditForm.visible" class="col-lg-6">
+	<h5>Edit news</h5>
+	<form id="newsForm" ng-submit="editThisNews()">
+    	<p><input ng-model="newsEditForm.title" type="text" name="title" placeholder="title of the news" /></p>
+        <p><textarea ng-model="newsEditForm.content" class="form-control" rows="5"  placeholder="title of the news"></textarea></p>
+        <p><button type="submit" class="btn btn-danger">Edit</button></p>
+    </form>
+</div>
+
+<!--post news-->
+<div class="col-lg-6">
+	<h5>Create news</h5>
+	<form id="newsForm" ng-submit="createNews()">
+    	<p><input ng-model="newsForm.title" type="text" name="title" placeholder="title of the news" /></p>
+        <p><textarea ng-model="newsForm.content" class="form-control" rows="5"  placeholder="title of the news"></textarea></p>
+        <p><button type="submit" class="btn btn-danger">Create</button></p>
+    </form>
+</div>

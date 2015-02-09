@@ -3,24 +3,24 @@ angular.module('AdminDirectives',[])
 	.directive('tournamentManagement',function(){
 		return {
 			restrict:'E',
-			templateUrl:'views/account-info-partials-adminTournamentManagement.html'
+			templateUrl:'views/adminTournamentManagement.html'
 		};
 	})
 	.directive('tournamentCreation',function(){
 		return {
 			restrict:'E',
-			templateUrl:'views/account-info-partials-adminTournamentCreation.html'
+			templateUrl:'views/adminTournamentCreation.html'
 		};
 	})
 	.directive('newsManagement',function(){
 		return{
 			restrict:'E',
-			templateUrl:'views/account-info-partials-adminNewsManagement.html'
+			templateUrl:'views/adminNewsManagement.html'
 		};
 	})
 	.directive('hallOfFameManagement',function(){
 		return{
 			restrict:'E',
-			templateUrl:'views/account-info-partials-adminHallOfFameManagement.html'
+			templateUrl:'views/adminHallOfFameManagement.html'
 		};
 	});

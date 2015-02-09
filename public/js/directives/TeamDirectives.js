@@ -3,26 +3,30 @@ angular.module('TeamDirectives',[])
 	.directive('teamMemberList',function(){
 		return {
 			restrict:'E',
-			templateUrl:'views/account-info-partials-teamMemberList.html'
+			templateUrl:'views/teamMemberList.html'
 		};
-	}).directive('teamRequestList',function(){
+	})
+	.directive('teamRequestList',function(){
 		return {
 			restrict:'E',
-			templateUrl:'views/account-info-partials-teamRequestList.html'
+			templateUrl:'views/teamRequestList.html'
 		};
-	}).directive('teamTeamCreate',function(){
+	})
+	.directive('teamCreate',function(){
 		return{
 			restrict:'E',
-			templateUrl:'views/account-info-partials-teamTeamCreate.html'
+			templateUrl:'views/teamCreate.html'
 		};
-	}).directive('teamTeamsList',function(){
+	})
+	.directive('teamTeamsList',function(){
 		return {
 			restrict:'E',
-			templateUrl:'views/account-info-partials-teamTeamsList.html'
+			templateUrl:'views/teamsList.html'
 		};
-	}).directive('teamTournamentJoin',function(){
+	})
+	.directive('teamTournamentJoin',function(){
 		return{
 			restrict:'E',
-			templateUrl:'views/account-info-partials-teamTournamentJoin.html'
+			templateUrl:'views/teamTournamentJoin.html'
 		};
 	});

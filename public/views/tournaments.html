@@ -1,31 +1,82 @@
 <div class="container">
-	<h1>Tournaments</h1>
     <div class="jumbotron">
-        <div class="well" ng-repeat="tournament in tournaments">
-        	<h2>{{tournament.name.original}} - {{tournament.stage.isOver?'Over':''}}
-        		{{tournament.stage.isRunning?'Running':''}}
-        		{{(tournament.stage.isSigningOpen?'Open for signup':'')}}</h2>
-        	<div class="row" ng-if="!tournament.stage.isSigningOpen">
-        		<div class="col-lg-3" ng-repeat="pastStage in tournament.history">
-	        		<h3>Stage {{$index +1}}</h3>
-	        		<div class="row" ng-repeat="match in pastStage.matches">
-	        			<p> <span ng-class="{'glyphicon glyphicon-plus-sign':match.winner===0,
-	        				'glyphicon glyphicon-minus-sign':match.winner===1}">{{match.team1}}</span>vs
-	        				<span ng-class="{'glyphicon glyphicon-plus-sign':match.winner===1,
-	        				'glyphicon glyphicon-minus-sign':match.winner===0}">{{match.team2}}</span></p>
-	        		</div>
-	        	</div>
-
-	        	<div class="col-lg-3" ng-if="tournament.currentStage.matches.length===1">
-	        		<h3>Final stage</h3>
-	        		<div class="row">
-	        			<p> <span ng-class="{'glyphicon glyphicon-plus-sign':tournament.currentStage.matches[0].winner===0,
-	        				'glyphicon glyphicon-minus-sign':tournament.currentStage.matches[0].winner===1}">{{tournament.currentStage.matches[0].team1}}</span>vs
-	        				<span ng-class="{'glyphicon glyphicon-plus-sign':tournament.currentStage.matches[0].winner===1,
-	        				'glyphicon glyphicon-minus-sign':tournament.currentStage.matches[0].winner===0}">{{tournament.currentStage.matches[0].team2}}</span></p>
-	        		</div>
-	        	</div>
+   		<h3>Tournaments</h3>
+		<p ng-show="error" class="text-danger">{{error.message}}</p>
+		<accordion>
+			<accordion-group ng-repeat="tournament in tournaments" is-Open="collapsed" heading="{{tournament.name.original}}">
+        	<p>Status: 
+        		<span class="text-success" ng-show="tournament.stage.isSigningOpen">Signing</span>
+        		<span class="text-primary" ng-show="tournament.stage.isRunning">Running</span>
+        		<span class="text-danger" ng-show="tournament.stage.isOver">End</span>
+        	</p>
+        	<hr>
+        	<div ng-show="tournament.stage.isSigningOpen">
+        		<p>signed teams({{tournament.teams.length}}/{{tournament.numberOfCompetitors}}): 
+        			<label class="btn btn-default" ng-repeat="team in tournament.teams">
+		      			{{team.name}}
+		      		</label>
+        		</p>
+        		<div ng-show="myTeam.status==='free' && myTeam.players.length === 5 && user.duty==='captain'">
+	        		<button class="btn btn-danger" ng-click="joinTournament(tournament)">sign</button>
+        		</div>
         	</div>
-	  	</div>
+
+        	<div ng-show="tournament.stage.isOver">
+        		<h3>The winner is <b>
+        			<span ng-show="tournament.currentStage.matches[0].winner === 0">{{tournament.currentStage.matches[0].team1}}
+        			</span>
+        			<span ng-show="tournament.currentStage.matches[0].winner === 1">{{tournament.currentStage.matches[0].team2}}
+        			</span>
+        			</b>
+        		</h3>
+        		<hr>
+        	</div>
+
+    		<!--Match history-->
+    		<div style="margin-top:10px" ng-repeat="stage in tournament.history">
+    			<span ng-repeat="match in stage.matches">
+	        		<div class="btn-group">
+	        			<label ng-class="{'btn btn-default':match.winner===2,
+	      					'btn btn-success':match.winner===0,
+	      					'btn btn-danger':match.winner===1}">
+	      					{{match.team1}}
+	      				</label>
+	        			<label ng-class="{'btn btn-default':match.winner===2,
+	      					'btn btn-success':match.winner===1,
+	      					'btn btn-danger':match.winner===0}">
+	      					{{match.team2}}
+	      				</label>
+			      	</div>
+		      	</span>
+	      	</div>
+
+	      	<!--current matches-->
+	      	<div style="margin-top:10px">
+    			<span ng-repeat="match in tournament.currentStage.matches">
+	        		<div class="btn-group">
+	        			<label ng-class="{'btn btn-default':match.winner===2,
+	      					'btn btn-success':match.winner===0,
+	      					'btn btn-danger':match.winner===1}">
+	      					{{match.team1}}
+	      				</label>
+	        			<label ng-class="{'btn btn-default':match.winner===2,
+	      					'btn btn-success':match.winner===1,
+	      					'btn btn-danger':match.winner===0}">
+	      					{{match.team2}}
+	      				</label>
+			      	</div>
+		      	</span>
+	      	</div>
+	      	<div ng-show="tournament.isCommitable">
+	      		<hr>
+	      		<p>Send your last match score:</p>
+		      	<button class="btn btn-success btn-lg" ng-click="sendScore(true)">
+		      		won
+		      	</button>
+		      	<button class="btn btn-danger btn-lg" ng-click="sendScore(false)">
+		      		lost
+		      	</button>
+	      	</div>
+		</accordion>
     </div>
 </div>   

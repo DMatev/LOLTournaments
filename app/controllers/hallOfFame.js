@@ -1,3 +1,4 @@
+'use strict';
 var User = require('../models/user');
 var HallOfFame = require('../models/hallOfFame');
 
@@ -8,7 +9,7 @@ function getAll(next){
 		}
 		return next({ status: 200, content: teams });
 	});
-};
+}
 
 function publish(data, next){
 	User.findById(data.consumer.id, function (err, consumer){
@@ -72,7 +73,7 @@ function edit(data, next){
 			}
 		}
 	});
-};
+}
 
 function remove(data, next){
 	User.findById(data.consumer.id, function (err, consumer){
@@ -99,7 +100,7 @@ function remove(data, next){
 			}
 		}
 	});
-};
+}
 
 exports.getAll = getAll;
 exports.publish = publish;

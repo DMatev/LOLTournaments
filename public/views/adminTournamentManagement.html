@@ -1,0 +1,108 @@
+<div>
+	<p ng-show="errorTournaments" class="text-danger">{{errorTournaments.message}}</p>
+	<h4>Existing tournaments:</h4>
+	<accordion close-others="oneAtATime">
+		<accordion-group ng-repeat="tournament in tournaments" heading="{{tournament.name.original}}">
+    	<p>Status: 
+    		<span class="text-success" ng-show="tournament.stage.isSigningOpen">Signing</span>
+    		<span class="text-primary" ng-show="tournament.stage.isRunning">Running</span>
+    		<span class="text-danger" ng-show="tournament.stage.isOver">End</span>
+    	</p>
+    	<hr>
+
+    	<!--Signing-->
+    	<div ng-show="tournament.stage.isSigningOpen">
+    		<p>signed teams({{tournament.teams.length}}/{{tournament.numberOfCompetitors}}): 
+    			<label class="btn btn-default" ng-repeat="team in tournament.teams">
+	      			{{team.name}}
+	      		</label>
+    		</p>
+    		<button ng-show="tournament.teams.length === tournament.numberOfCompetitors" class="btn btn-primary" 
+	      		ng-click="startTournament(tournament.name.original)">
+	      	start tournament
+	      	</button>
+    	</div>
+
+    	<!--Ended-->
+		<div ng-show="tournament.stage.isOver">
+    		<h3>The winner is <b>
+    			<span ng-show="tournament.currentStage.matches[0].winner === 0">{{tournament.currentStage.matches[0].team1}}
+    			</span>
+    			<span ng-show="tournament.currentStage.matches[0].winner === 1">{{tournament.currentStage.matches[0].team2}}
+    			</span>
+    			</b>
+    		</h3>
+    		<hr>
+    	</div>
+
+		<!--Match history-->
+		<div style="margin-top:10px" ng-repeat="stage in tournament.history">
+			<span ng-repeat="match in stage.matches">
+        		<div class="btn-group">
+        			<label ng-class="{'btn btn-default':match.winner===2,
+      					'btn btn-success':match.winner===0,
+      					'btn btn-danger':match.winner===1}">
+      					{{match.team1}}
+      				</label>
+        			<label ng-class="{'btn btn-default':match.winner===2,
+      					'btn btn-success':match.winner===1,
+      					'btn btn-danger':match.winner===0}">
+      					{{match.team2}}
+      				</label>
+		      	</div>
+	      	</span>
+      	</div>
+
+      	<!--current matches-->
+      	<!--Ended-->
+      	<div style="margin-top:10px" ng-hide="tournament.stage.isRunning">
+			<span ng-repeat="match in tournament.currentStage.matches">
+        		<div class="btn-group">
+        			<label ng-class="{'btn btn-default':match.winner===2,
+      					'btn btn-success':match.winner===0,
+      					'btn btn-danger':match.winner===1}">
+      					{{match.team1}}
+      				</label>
+        			<label ng-class="{'btn btn-default':match.winner===2,
+      					'btn btn-success':match.winner===1,
+      					'btn btn-danger':match.winner===0}">
+      					{{match.team2}}
+      				</label>
+		      	</div>
+	      	</span>
+      	</div>
+
+      	<!--Running-->
+      	<div style="margin-top:10px" ng-show="tournament.stage.isRunning">
+			<span ng-repeat="match in tournament.currentStage.matches">
+        		<div class="btn-group">
+        			<label ng-class="{'btn btn-default':match.winner===2,
+      					'btn btn-success':match.winner===0,
+      					'btn btn-danger':match.winner===1}"
+      					ng-click="resolveMatch(tournament.name.original,match._id,0)">
+      					{{match.team1}}
+      				</label>
+        			<label ng-class="{'btn btn-default':match.winner===2,
+      					'btn btn-success':match.winner===1,
+      					'btn btn-danger':match.winner===0}"
+      					ng-click="resolveMatch(tournament.name.original,match._id,1)">
+      					{{match.team2}}
+      				</label>
+		      	</div>
+	      	</span>
+	      	<hr>
+	      	<button ng-show="tournament.isResolvable" class="btn btn-primary"
+		      ng-click="tryResolveStage(tournament.name.original)">
+		      Try to resolve stage
+		  	</button>
+		  	<button ng-show="tournament.isEndable && tournament.currentStage.matches.length>1" class="btn btn-primary"
+		      ng-click="endStageTournament(tournament.name.original)">
+		      End stage
+		  	</button>
+		  	<button ng-show="tournament.isEndable && tournament.currentStage.matches.length===1" class="btn btn-primary"
+		      ng-click="endTournament(tournament.name.original)">
+		      End Tournament
+		  	</button>
+      	</div>
+	</accordion>
+</div>

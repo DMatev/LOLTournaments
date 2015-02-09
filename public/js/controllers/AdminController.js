@@ -1,236 +1,234 @@
 'use strict';
-angular.module('AdminController',[])
-	.controller('AdminCtrl', function($scope, $http) {
-	  $scope.users = [];
-	  $scope.tournamentForm={};
-	  $scope.tournamentList={};
-	  $scope.stageResults=[];
+angular.module('AdminController', ['ngSanitize'])
+	.controller('AdminCtrl', function ($scope, $http, News, HallOfFame, Tournament){
+		$scope.oneAtATime = true;
+		$scope.errorNews = null;
+		$scope.errorHallOfFame = null;
+		$scope.errorTournaments = null;
+		$scope.errorCreateTournament = null;
+		$scope.newsList = {};
+		$scope.hallOfFameList = {};
+		$scope.tournaments = {};
+		$scope.newsForm = {};
+	  	$scope.hallOfFameForm = {};
+	  	$scope.tournamentForm = {};
+		$scope.newsEditForm = {
+	  		visible: false,
+	  		selected: null
+	  	};
+	  	$scope.hallOfFameEditForm = {
+	  		visible: false,
+	  		selected: null
+	  	};
 
-	  $scope.newsEditForm={
-	  	visible: false,
-	  	selected: null
-	  };
+		function getNews (){
+			News.getAll()
+				.success(function (data){
+					$scope.newsList = data;
+				});
+		}
 
-	  $scope.newsForm={};
-	  $scope.newsList={};
+		function getHallOfFame (){
+			HallOfFame.get()
+				.success(function (data){
+					$scope.hallOfFameList = data;
+				});
+		}
 
-	  $scope.hallOfFameEditForm={
-	  	visible: false,
-	  	selected: null
-	  };
+		function getAllTournaments (){
+			Tournament.getAll()
+				.success(function (data){
+					$scope.tournaments = data;
+					resolvable();
+				});
+		}
 
-	  $scope.hallOfFameForm={};
-	  $scope.hallOfFameList={};
+		function resolvable(){
+	 		var found;
+			for(var i=0; i<$scope.tournaments.length; i++){
+				if($scope.tournaments[i].stage.isRunning){
+					found = false;
+					for(var j=0; j<$scope.tournaments[i].currentStage.matches.length; j++){
+						if($scope.tournaments[i].currentStage.matches[j].winner === 2){
+							j = $scope.tournaments[i].currentStage.matches.length;
+							$scope.tournaments[i].isResolvable = true;
+							found = true;
+						}
+					}
+					if(!found){
+						$scope.tournaments[i].isEndable = true;
+					}
+				}
+			}
+		}
 
-	  $scope.createNews=function(){
-	  	$http.post('/api/news',{title:$scope.newsForm.title,content:$scope.newsForm.content})
-	  		.success(function(data){
-	  			$scope.errorNews=null;
-	  			$scope.newsForm.title=null;
-	  			$scope.newsForm.content=null;
-	  			getNews();
-	  		})
-	  		.error(function(data){
-	  			$scope.errorNews=data;
-	  		});
-	  };
-
- 	  $scope.deleteNews=function(id){
-	  	$http.delete('/api/news/'+id)
-	  		.success(function(data){
-	  			getNews();
-	  		})
-	  		.error(function(data){
-	  			getNews();
-	  		});
-	  };
-		$scope.editNews=function(news){
-			$scope.newsEditForm.visible=true;
-			$scope.newsEditForm.selected=news._id;
-			$scope.newsEditForm.title=news.title;
-			$scope.newsEditForm.content=news.content;
-		};
-
-		$scope.editThisNews=function(){
-		  	$http.put('/api/news/'+$scope.newsEditForm.selected,
-		  		{title:$scope.newsEditForm.title,content:$scope.newsEditForm.content})
-		  		.success(function(data){
-		  			$scope.errorNews=null;
-		  			$scope.newsEditForm.visible=false;
+		// NEWS
+		$scope.createNews = function (){
+		  	News.create($scope.newsForm.title, $scope.newsForm.content)
+		  		.success(function (){
+		  			$scope.errorNews = null;
+		  			$scope.newsForm.title = null;
+		  			$scope.newsForm.content = null;
 		  			getNews();
 		  		})
-		  		.error(function(data){
-		  			$scope.errorNews=data;
+		  		.error(function (data){
+		  			$scope.errorNews = data;
 		  		});
 	  	};
 
- 	  $scope.deleteComment=function(nid,cid){
-	  	$http.delete('/api/news/'+nid+'/comment/'+cid)
-	  		.success(function(data){
-	  			getNews();
-	  		})
-	  		.error(function(data){
-	  			getNews();
-	  		});
-	  };	
+ 	 	$scope.deleteNews = function (id){
+ 	  		News.delete(id)
+		  		.success(function (){
+		  			getNews();
+		  		})
+		  		.error(function (){
+		  			getNews();
+		  		});
+	  	};
 
-	  $scope.createHallOfFameRecord=function(){
-	  	$http.post('/api/halloffame',{team:$scope.hallOfFameForm.team,tournament:$scope.hallOfFameForm.tournament})
-	  		.success(function(data){
-	  			$scope.errorHallOfFame=null;
-	  			$scope.hallOfFameForm.team=null;
-	  			$scope.hallOfFameForm.tournament=null;
-	  			getHallOfFame();
-	  		})
-	  		.error(function(data){
-	  			$scope.errorHallOfFame=data;
-	  		});
-	  };
+		$scope.editNews = function(news){
+			$scope.newsEditForm.visible = true;
+			$scope.newsEditForm.selected = news._id;
+			$scope.newsEditForm.title = news.title;
+			$scope.newsEditForm.content = news.content;
+		};
 
-	  $scope.deleteHallOfFameRecord=function(id){
-	  	$http.delete('/api/halloffame/'+id)
-	  		.success(function(data){
-	  			getHallOfFame();
-	  		})
-	  		.error(function(data){
-	  			getHallOfFame();
-	  		});
-	  };
-		$scope.editHallOfFame=function(record){
-			$scope.hallOfFameEditForm.visible=true;
-			$scope.hallOfFameEditForm.selected=record._id;
-			$scope.hallOfFameEditForm.team=record.team;
-			$scope.hallOfFameEditForm.tournament=record.tournament;
+		$scope.editThisNews = function(){
+			News.edit($scope.newsEditForm.selected, $scope.newsEditForm.title, $scope.newsEditForm.content)
+		  		.success(function (){
+		  			$scope.errorNews = null;
+		  			$scope.newsEditForm.visible = false;
+		  			getNews();
+		  		})
+		  		.error(function (data){
+		  			$scope.errorNews = data;
+		  		});
+	  	};
+
+ 	 	$scope.deleteComment = function (nid, cid){
+		  	News.deleteComment(nid, cid)
+		  		.success(function (){
+		  			getNews();
+		  		})
+		  		.error(function (){
+		  			getNews();
+		  		});
+	  	};	
+
+	  	// HALLOFFAME
+	 	$scope.createHallOfFameRecord = function (){
+		  	HallOfFame.createRecord($scope.hallOfFameForm.team, $scope.hallOfFameForm.tournament)
+		  		.success(function (){
+		  			$scope.errorHallOfFame = null;
+		  			$scope.hallOfFameForm.team = null;
+		  			$scope.hallOfFameForm.tournament = null;
+		  			getHallOfFame();
+		  		})
+		  		.error(function (data){
+		  			$scope.errorHallOfFame = data;
+		  		});
+	  	};
+
+	  	$scope.deleteHallOfFameRecord = function (id){
+		  	HallOfFame.deleteRecord(id)
+		  		.success(function (){
+		  			getHallOfFame();
+		  		})
+		  		.error(function (){
+		  			getHallOfFame();
+		  		});
+	  	};
+
+		$scope.editHallOfFame = function (record){
+			$scope.hallOfFameEditForm.visible = true;
+			$scope.hallOfFameEditForm.selected = record._id;
+			$scope.hallOfFameEditForm.team = record.team;
+			$scope.hallOfFameEditForm.tournament = record.tournament;
 		};
 
 		$scope.editHallOfFameRecord=function(){
-		  	$http.put('/api/halloffame/'+$scope.hallOfFameEditForm.selected,
-		  		{team:$scope.hallOfFameEditForm.team,tournament:$scope.hallOfFameEditForm.tournament})
-		  		.success(function(data){
-		  			$scope.errorHallOfFame=null;
-		  			$scope.hallOfFameEditForm.visible=false;
+			HallOfFame.edit($scope.hallOfFameEditForm.selected, $scope.hallOfFameEditForm.team, $scope.hallOfFameEditForm.tournament)
+		  		.success(function (){
+		  			$scope.errorHallOfFame = null;
+		  			$scope.hallOfFameEditForm.visible = false;
 		  			getHallOfFame();
 		  		})
-		  		.error(function(data){
-		  			$scope.errorHallOfFame=data;
+		  		.error(function (data){
+		  			$scope.errorHallOfFame = data;
 		  		});
 	  	};
-	  ///
-	  /// TOURNAMENTs functions
-	  ///
-	  $scope.createTournament=function(){
-	  	$http.post('/api/tournaments',{
-	  		name:$scope.tournamentForm.tournamentName,
-	  		numberOfCompetitors:$scope.tournamentForm.tournamentParticipantsNumber})
-	  		.success(function(data){
-	  			$scope.errorCreateTournament=null;
-	  			getAllTournaments();
-	  		})
-	  		.error(function(data){
-	  			$scope.errorCreateTournament=data;
-	  		});
-	  };
 
-	  $scope.startTournament=function(tournamentName){
-	  	$http.put('/api/tournaments/name/'+tournamentName+'/start')
-	  		.success(function(data){
-	  			$scope.errorTournaments=null;
-	  			getAllTournaments();
-	  		}).error(function(data){
-	  			$scope.errorTournaments=data;
-	  		});
-	  };
+	  	// TOURNAMENTS 
+	  	$scope.createTournament = function (){
+		  	Tournament.create($scope.tournamentForm.tournamentName, $scope.tournamentForm.tournamentParticipantsNumber)
+		  		.success(function (){
+		  			$scope.errorCreateTournament = null;
+		  			$scope.tournamentForm.tournamentName = null;
+		  			$scope.tournamentForm.tournamentParticipantsNumber = null;
+		  			getAllTournaments();
+		  		})
+		  		.error(function (data){
+		  			$scope.errorCreateTournament = data;
+		  		});
+	  	};
 
-	  $scope.resolveMatch=function(tournamentName,matchId,resolvedWinner){
-	  	console.log(tournamentName +' '+ matchId + ' ' +resolvedWinner);
-	  	$http.put('/api/tournaments/name/'+tournamentName+'/match/'+matchId,
-	  		{winner:resolvedWinner})
-	  		.success(function(data){
-	  			$scope.errorTournaments=null;
-	  			getAllTournaments();
-	  		})
-	  		.error(function(data){
-	  			$scope.errorTournaments=data;
-	  		});
-	  };
+	  	$scope.startTournament = function (tournamentName){
+		  	Tournament.start(tournamentName)
+		  		.success(function (){
+		  			$scope.errorTournaments = null;
+		  			getAllTournaments();
+		  		})
+		  		.error(function (data){
+		  			$scope.errorTournaments = data;
+		  		});
+	  	};
 
-	  $scope.endStageTournament=function(tournamentName){
-	  	$http
-	  	.put('/api/tournaments/name/'+tournamentName+'/stage/resolve')
-	  		.success(function(data){
-	  			$scope.errorTournaments=null;
-	  			$http.put('/api/tournaments/name/'+tournamentName+'/stage/end')
-	  				.success(function(data){
-	  					$scope.errorTournaments=null;
-	  				})
-	  				.error(function(data){
-	  					$scope.errorTournaments=data;
-	  				});
-	  		})
-	  		.error(function(data){
-	  			$scope.errorTournaments=data;
-	  		});
-	  };
+	  	$scope.resolveMatch = function (tournamentName, matchId, resolvedWinner){
+			Tournament.resolveMatch(tournamentName, matchId, resolvedWinner)
+		  		.success(function (){
+		  			$scope.errorTournaments = null;
+		  			getAllTournaments();
+		  		})
+		  		.error(function (data){
+		  			$scope.errorTournaments = data;
+		  		});
+	  	};
 
-	  $scope.endTournament=function(tournamentName){
-	  	$http.put('/api/tournaments/name/'+tournamentName+'/end')
-	  		.success(function(data){
-	  			$scope.errorTournaments=null;
-	  		})
-	  		.error(function(data){
-	  			$scope.errorTournaments=data;
-	  		});
-	  };
+		$scope.tryResolveStage = function (tournamentName){
+		  	Tournament.tryResolveStage(tournamentName)
+		  		.success(function (){
+		  			$scope.errorTournaments = null;
+		  			getAllTournaments();
+		  		})
+		  		.error(function (data){
+		  			$scope.errorTournaments = data;
+		  			getAllTournaments();
+		  		});
+		};
 
-	  	function getAllTournaments(){
-			$http.get('/api/tournaments')
-				.success(function(data){
-					$scope.tournamentList=data;
+		$scope.endStageTournament = function (tournamentName){
+		  	Tournament.endStage(tournamentName)
+				.success(function (){
+					$scope.errorTournaments = null;
+					getAllTournaments();
 				})
-				.error(function(data){
-					console.log(data);
+				.error(function (data){
+					$scope.errorTournaments = data;
 				});
-		}
+		};
 
-		function getNews(){
-			$http.get('/api/news')
-				.success(function(data){
-					$scope.newsList=data;
-				})
-				.error(function(data){
-					console.log(data);
-				});
-		}
+	  	$scope.endTournament = function (tournamentName){
+		  	Tournament.end(tournamentName)
+		  		.success(function (){
+		  			$scope.errorTournaments = null;
+		  			getAllTournaments();
+		  		})
+		  		.error(function (data){
+		  			$scope.errorTournaments = data;
+		  		});
+	  	};
 
-		function getHallOfFame(){
-			$http.get('/halloffame')
-				.success(function(data){
-					$scope.hallOfFameList=data;
-				})
-				.error(function(data){
-					console.log(data);
-				});
-		}
 		getAllTournaments();
 		getNews();
 		getHallOfFame();
-	 
-	})
-	.controller('accordionTournaments',['$scope','$http',function($scope,$http){
-		
-		$scope.oneAtATime=true;
-		
-		$scope.startTournament=function(tournamentName){
-		  	$http.put('/api/tournaments/name/'+tournamentName+'/start')
-		  		.success(function(data){
-		  			$scope.errorTournaments=null;
-		  		}).error(function(data){
-		  			$scope.errorTournaments=data;
-		  		});
-		  };
-	}])
-	.controller('accordionNews',['$scope','$http',function($scope,$http){
-		
-		$scope.oneAtATime=true;
-		
-	}]);
+	});

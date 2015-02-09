@@ -1,0 +1,7 @@
+<p ng-show="errorCreateTournament" class="text-danger">{{errorCreateTournament.message}}</p>
+<h4>Create new tournament</h4>
+<form id="tournamentForm" ng-submit="createTournament()">
+  <p><input ng-model="tournamentForm.tournamentName" type="text" name="team" placeholder="name of the tournament" /></p>
+  <p><input ng-model="tournamentForm.tournamentParticipantsNumber" type="number" name="number" placeholder="number of teams" /></p>
+  <button type="submit" class="btn btn-danger">Create a tournament</button>
+</form>

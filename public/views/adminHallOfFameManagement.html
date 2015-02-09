@@ -1,0 +1,36 @@
+<h4>Hall Of Fame</h4>
+<!--show all records from Hall Of Fame-->
+<div ng-show="hallOfFameList.length>0">
+	<h5>Records</h5>
+	<table class="table table-striped">
+		<th>Team</th><th>Tournament</th><th>Edit</th><th>Remove</th>
+		<tr ng-repeat="record in hallOfFameList">
+		    <td class="col-md-5">{{record.team}}</td>
+		    <td class="col-md-5">{{record.tournament}}</td>
+		    <td class="col-md-1"><span ng-click="editHallOfFame(record)" class="glyphicon glyphicon-pencil"></span></td>
+		    <td class="col-md-1"><span ng-click="deleteHallOfFameRecord(record._id)" class="glyphicon glyphicon-remove"></span></td>
+		</tr>						
+  	</table>
+	</div>
+
+<p ng-show="errorHallOfFame" class="text-danger">{{errorHallOfFame.message}}</p>
+
+<!--edit record from Hall Of Fame-->
+<div ng-show="hallOfFameEditForm.visible" class="col-lg-6">
+	<h5>edit record</h5>
+	<form id="hallOfFameEditForm" ng-submit="editHallOfFameRecord()">
+    <input ng-model="hallOfFameEditForm.team" type="text" name="team" placeholder="name of the team" />
+	<input ng-model="hallOfFameEditForm.tournament" type="text" name="tournament" placeholder="name of the tournament" />
+    <button type="submit" class="btn btn-danger">Edit record</button>
+    </form>
+</div>
+
+<!--create record for Hall Of Fame-->
+<div class="col-lg-6">
+    <h5>Create record</h5>
+	<form id="hallOfFameForm" ng-submit="createHallOfFameRecord()">
+        <input ng-model="hallOfFameForm.team" type="text" name="team" placeholder="name of the team" />
+		<input ng-model="hallOfFameForm.tournament" type="text" name="tournament" placeholder="name of the tournament" />
+        <button type="submit" class="btn btn-danger">Create record</button>
+    </form>
+</div>

@@ -1,0 +1,9 @@
+<div ng-show="requestsList">
+	<h4>Team`s joining requests:</h4>
+	<div class="list-group col-lg-6">
+		<label class="list-group-item" ng-repeat="request in requestsList">{{request}}
+		<span ng-click="handleTeamRequest(request,'true')" class="glyphicon glyphicon-thumbs-up"></span>
+		<span ng-click="handleTeamRequest(request,'false')" class="glyphicon glyphicon-thumbs-down"></span>
+		</label>
+	</div>
+</div>

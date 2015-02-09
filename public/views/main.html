@@ -1,47 +1,34 @@
-   <div class="container">
-	<h1>Home Page</h1>
-	<div class="jumbotron" ng-hide="isAuthenticated" ng-controller="NewsCtrl">
+<div class="container">
+    <div class="jumbotron">
         <h3>News</h3>
-        <accordion close-others="oneAtATime" >
-            <accordion-group ng-repeat="news in news" heading="{{news.title}}" is-Open="collapsed">
-                <p style="font-size:12px;">Author: {{news.author}}</p>
-                <p>{{news.content}}</p>
+        <accordion close-others="oneAtATime">
+            <accordion-group ng-repeat="news in news"  is-Open="collapsed">
+                <accordion-heading>
+                    <div ng-bind-html="news.title"></div>
+                </accordion-heading>
+                <div ng-bind-html="news.content"></div>
+                <hr>
+                <p>
+                    <div align="right">
+                        <span>Published by:</span>
+                        <span ng-bind-html="news.author"></span>
+                        <span>, at:</span>
+                        <span>{{news.createDate | date}}</span>
+                    </div>
+                </p>
                 <accordion close-others="oneAtATime">
-                    <accordion-group heading="Comments({{news.comments.length}})">
-                        <ul ng-show="news.comments.length>0" style="list-style-type: none;"> 
-                            <li ng-repeat="comment in news.comments">
-                            <p>{{comment.author}}: {{comment.content}}</p>
-                            </li>
-                        </ul>
+                    <accordion-group ng-hide="!isAuthenticated && news.comments.length === 0" heading="Comments({{news.comments.length}})">
+                        <div ng-repeat="comment in news.comments">
+                            <span><b>{{comment.author}}</b>: {{comment.content}}</span>
+                            <hr>
+                        </div>
+                        <form ng-show="isAuthenticated" id="commentsForm" ng-submit="createComment(news._id)">
+                            <textarea ng-model="commentsForm.content" class="form-control" rows="3"  placeholder="content of comment"></textarea>
+                            <button type="submit" class="btn btn-default">Send</button>
+                        </form>
                     </accordion-group>
                 </accordion>
             </accordion-group>
         </accordion>
     </div>
-
-    <div class="jumbotron" ng-show="isAuthenticated" ng-controller="NewsCtrl">
-        <h3>News</h3>
-        <accordion close-others="oneAtATime" >
-            <accordion-group ng-repeat="news in news" heading="{{news.title}}" is-Open="collapsed">
-                <p>Content: {{news.content}}</p>
-                <p>Author: {{news.author}}</p>
-                <accordion close-others="oneAtATime">
-                    <accordion-group heading="Comments({{news.comments.length}})">
-                        <ul ng-show="news.comments.length>0" style="list-style-type: none;"> 
-                            <li ng-repeat="comment in news.comments">
-                            <p>{{comment.author}}: {{comment.content}}</p>
-                            </li>
-                        </ul>
-                        <accordion-group  heading="send comment" is-Open="collapsed">
-                            <form id="commentsForm" ng-submit="createComment(news._id)">
-                                <input ng-model="commentsForm.title" type="text" name="content" placeholder="content of comment" />
-                                <button type="submit" class="btn btn-default">Send</button>
-                            </form>
-                        </accordion-group>
-                    </accordion-group>
-                </accordion>
-            </accordion-group>
-        </accordion>
-    </div>
-
 </div>   

@@ -1,3 +1,4 @@
+'use strict';
 var User = require('../models/user');
 var Team = require('../models/team');
 
@@ -8,7 +9,7 @@ function getAll(next){
 		}
 		return next({ status: 200, content: teams });
 	});
-};
+}
 
 function getById(data, next){
 	Team.findById(data.team.id, function (err, team){
@@ -17,7 +18,7 @@ function getById(data, next){
 		}
 		return next({ status: 200, content: team });
 	});
-};
+}
 
 function getByName(data, next){
 	Team.findOne({ 'name.lowerCase': data.name.toLowerCase() }, function (err, team){
@@ -26,7 +27,7 @@ function getByName(data, next){
 		}
 		return next({ status: 200, content: team });
 	});
-};
+}
 
 function getMine(data, next){
 	User.findById(data.consumer.id, function (err, consumer){
@@ -44,7 +45,7 @@ function getMine(data, next){
 			});
 		}
 	});
-};
+}
 
 exports.getAll = getAll;
 exports.getById = getById;

@@ -1,0 +1,58 @@
+<h4>News</h4>
+<!--show all news-->
+<div>
+	<accordion close-others="oneAtATime">
+		<accordion-group ng-repeat="news in newsList">
+	    	<accordion-heading>
+            	<div ng-bind-html="news.title"></div>
+	    	</accordion-heading>
+	        <div ng-bind-html="news.content"></div>
+	        <hr>
+	        <p>
+	            <div align="right">
+	                <span>Published by:</span>
+	                <span ng-bind-html="news.author"></span>
+	                <span>, at:</span>
+	                <span>{{news.createDate | date}}</span>
+	            </div>
+	        </p>
+	      	<accordion ng-show="news.comments.length>0" close-others="oneAtATime">
+		    	<accordion-group heading="Comments({{news.comments.length}})">
+			    	<ul ng-show="news.comments.length>0" style="list-style-type: none;">
+			    		<div ng-repeat="comment in news.comments">
+                            <span><b>{{comment.author}}</b>: {{comment.content}}</span>
+                            <div align="right">
+                            	<span ng-click="deleteComment(news._id,comment._id)" class="glyphicon glyphicon-remove"></span>
+                            </div>
+                            <hr>
+                        </div>
+			      	</ul>
+		      	</accordion-group>
+		  </accordion>
+	      <span ng-click="editNews(news)" class="glyphicon glyphicon-pencil"></span>
+	      <span ng-click="deleteNews(news._id)" class="glyphicon glyphicon-remove"></span>
+	    </accordion-group>
+	</accordion>
+</div>
+
+<p ng-show="errorNews" class="text-danger">{{errorNews.message}}</p>
+
+<!--edit news-->
+<div ng-show="newsEditForm.visible" class="col-lg-6">
+	<h5>Edit news</h5>
+	<form id="newsForm" ng-submit="editThisNews()">
+    	<p><input ng-model="newsEditForm.title" type="text" name="title" placeholder="title of the news" /></p>
+        <p><textarea ng-model="newsEditForm.content" class="form-control" rows="5"  placeholder="title of the news"></textarea></p>
+        <p><button type="submit" class="btn btn-danger">Edit</button></p>
+    </form>
+</div>
+
+<!--post news-->
+<div class="col-lg-6">
+	<h5>Create news</h5>
+	<form id="newsForm" ng-submit="createNews()">
+    	<p><input ng-model="newsForm.title" type="text" name="title" placeholder="title of the news" /></p>
+        <p><textarea ng-model="newsForm.content" class="form-control" rows="5"  placeholder="title of the news"></textarea></p>
+        <p><button type="submit" class="btn btn-danger">Create</button></p>
+    </form>
+</div>

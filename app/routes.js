@@ -1,3 +1,4 @@
+'use strict';
 var expressJwt = require('express-jwt');
 var sanitizeHtml = require('sanitize-html');
 var config = require('./config');
@@ -21,13 +22,10 @@ module.exports = function(app) {
   });
 
   // code 0-mongodb error
-  // code 1-mongodb error - server not found
   // code 2-required parameter not given
   // code 3-data - validation error
   // code 4-data - already taken
   // code 5-wrong password/recoveryCode
-  // code 6-server signin is closed
-  // code 7-server signup is closed
   // code 8-forbidden (only admins)
   // code 9-forbidden (only captains)
   // code 10-user not found in db
@@ -252,7 +250,6 @@ module.exports = function(app) {
 
   // delete comment on news by ids
   app.delete('/api/news/:nid/comment/:cid', function (req, res){
-    var content = sanitizeHtml(req.body.content, { allowedTags: [], allowedAttributes: [] });
     if(!/^[0-9a-fA-F]{24}$/.test(req.params.nid)){
       return res.status(400).json({ code: 3, field: 'id', description: 'news id validation is wrong', message: 'Wrong id' }); 
     }
@@ -455,7 +452,7 @@ module.exports = function(app) {
     if(typeof req.body.numberOfCompetitors !== 'number'){
       return res.status(400).json({ code: 2, field: 'numberOfCompetitors', description: 'numberOfCompetitors is required', message: 'Number of competitors cannot be blank' });
     }
-    if(!((number != 0) && !(number & (number - 1)))){
+    if(!((number !== 0) && !(number & (number - 1)))){
       return res.status(400).json({ code: 3, field: 'numberOfCompetitors', description: 'numberOfCompetitors validation is wrong', message: 'Number of competitors must be positive integer number powered of 2' }); 
     }
     if((number < 4) || (number > 16)){

@@ -1,3 +1,4 @@
+'use strict';
 var User = require('../models/user');
 var Team = require('../models/team');
 
@@ -12,7 +13,7 @@ function getInfo(data, next){
 			return next({ status: 200, content: { username: consumer.account.username.original, email: consumer.account.email.original, role: consumer.account.role, team: consumer.game.team, duty: consumer.game.duty } });
 		}
 	});
-};
+}
 
 function makeRequestToJoinTeam(data, next){
 	var found = false;
@@ -54,7 +55,7 @@ function makeRequestToJoinTeam(data, next){
 			}	
 		}
 	});
-};
+}
 
 exports.getInfo = getInfo;
 exports.joinTeam = makeRequestToJoinTeam;

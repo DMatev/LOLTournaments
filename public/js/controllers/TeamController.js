@@ -1,49 +1,68 @@
 'use strict';
-angular.module('TeamController',[])
-	.controller('TeamCtrl',['$scope','$http','$window',function($scope,$http,$window){
-		$scope.team='none';
-		$scope.teamForm={};
-		$scope.teamList={};
-		$scope.myTeam={};
-		
-		$scope.requestsList={};
-		$scope.selectedTeam;
-		$scope.tournamentList={};
-		$scope.selectedTournament;
+angular.module('TeamController', [])
+	.controller('TeamCtrl', function ($scope, $http, $window, User, Team){
+		$scope.error = null;
+		$scope.myTeam = {};
+		$scope.teamList = {};
+		$scope.requestsList = {};
+		$scope.teamForm = {};
+		$scope.selectedTournament = null;	
 
-		
-
-		function getUserInfo(){
-			$http.get('/api/userinfo')
-	          .success(function (data) {
-	            $scope.isAuthenticated = true;
-	            $scope.user = {username: data.username, email: data.email, role: data.role, duty: data.duty, team: data.team};
-
-	          })
-	          .error(function (data) {
-	            $scope.isAuthenticated = false;
-	            delete $window.sessionStorage.token;
+		function getUserInfo (){
+			User.getInfo()
+				.success(function (data){
+					$scope.user.username = data.username;
+					$scope.user.email = data.email;
+					$scope.user.role = data.role;
+					$scope.user.duty = data.duty;
+					$scope.user.team = data.team;
+				})
+				.error(function (){
+	            	$scope.isAuthenticated = false;
+	            	delete $window.sessionStorage.token;
 	          });
 		}
 
-		$scope.createTeam=function(){
-			$http.post('/api/myteam',{name:$scope.teamForm.name})
-				.success(function(data){
+		function getMyTeam (){
+			User.getMyTeam()
+				.success(function (data){
+					$scope.myTeam = data;
+				});
+		}
+
+		function getAllRequests (){
+			Team.requests()
+				.success(function (data){
+					$scope.requestsList = data;
+				});
+		}
+
+		function getAllTeams (){
+			Team.getAll()
+				.success(function (data){
+					$scope.teamList = data;
+				});
+		}
+
+		$scope.createTeam = function (){
+			Team.create($scope.teamForm.name)
+				.success(function (){
 					$scope.error = null;
-					$scope.teamForm={};
+					$scope.teamForm = {};
 					getUserInfo();
 					getMyTeam();
+					getAllRequests();
 				})
-				.error(function(data){
+				.error(function (data){
 					$scope.error = data;
 				});
 		};
 
-		$scope.leaveTeam=function(){
-			$http.delete('/api/myteam')
-				.success(function(data){
+		$scope.leaveTeam = function (){
+			Team.leave()
+				.success(function (){
 					$scope.error = null;
-					$scope.teamForm={};
+					$scope.teamForm = {};
 					getUserInfo();
 					getMyTeam();
 					getAllTeams();
@@ -53,122 +72,58 @@ angular.module('TeamController',[])
 				});
 		};
 
-		$scope.selectTeam=function(id){
-			if($scope.teamList[id].requests.indexOf($scope.user.username)>-1){
-				$scope.error={};
-				$scope.error.message = 'You have already sent request to that team';
-			}else{
-				$scope.selectedTeam=id;
-				$scope.error = null;
+		$scope.selectTeam = function (id){
+			if($scope.teamList[id].requests.indexOf($scope.user.username) === -1){
+				$scope.selectedTeam = id;
 			}
 		};
 
-		$scope.joinTeam=function(){
-			$http.post('/api/teams/request',{name:$scope.teamList[$scope.selectedTeam].name.original})
-				.success(function(data){
+		$scope.joinTeam = function (){
+			Team.join($scope.teamList[$scope.selectedTeam].name.original)
+				.success(function (){
 					delete $scope.selectedTeam;
 					$scope.error = null;
 					getAllTeams();
 				})
-				.error(function(data){
-					$scope.error=data;
-				});
-		};
-		//STRANGE THINGS R HAPPENING must check
-		$scope.handleTeamRequest=function(name,approved){
-			if(approved==='true'){
-				approved=true;
-			}else{
-				approved=false;
-			}
-			$http.put('/api/myteam/requests',{name:name,approved:approved})
-				.success(function(data){
-					$scope.error = null;
-					getMyTeam();
-					getAllRequests();
-				})
-				.error(function(data){
-					$scope.error=data;
-				});
-		};
-		
-		$scope.kickMember=function(member){
-			$http.delete('/api/myteam/member/'+member)
-				.success(function(data){
-					$scope.error = null;
-					getMyTeam();
-				})
-				.error(function(data){
-					$scope.error=data;
-				});
-		};
-
-		$scope.change=function(tournament){
-			$scope.selectedTournament=tournament;
-		};
-
-		$scope.joinTournament=function(selectedTournament){
-			$http.post('/api/myteam/tournament',{name:selectedTournament.name.original})
-				.success(function(data){
-					$scope.error = null;
-					getMyTeam();
-				})
-				.error(function(data){
+				.error(function (data){
 					$scope.error = data;
 				});
 		};
 
-
-		//AT start-get all teams,get my team list members,get request for my team
-
-		//GET ALL TEAMS TO MAKE A LIST
-		function getAllTeams(){
-			$http.get('/api/teams')
-				.success(function(data){
-					$scope.teamList=data;
+		$scope.handleTeamRequest = function (name, approved){
+			if(approved === 'true'){
+				approved = true;
+			} else {
+				approved = false;
+			}
+			Team.handleTeamRequest(name, approved)
+				.success(function (){
+					$scope.error = null;
+					getMyTeam();
+					getAllRequests();
 				})
-				.error(function(data){
-					console.log(data);
+				.error(function (data){
+					$scope.error = data;
 				});
-		}
-		getAllTeams();
-
-		//GET ALL TOURNAMENTS TO MAKE LIST or dropdown or smth else
-		function getAllTournaments(){
-			$http.get('/api/tournaments')
-				.success(function(data){
-					$scope.tournamentList=data;
+		};
+		
+		$scope.kickMember = function (member){
+			Team.kickMember(member)
+				.success(function (){
+					$scope.error = null;
+					getMyTeam();
 				})
-				.error(function(data){
-					console.log(data);
+				.error(function (data){
+					$scope.error = data;
 				});
-		}
-		getAllTournaments();
+		};
 
-		//GET TEAM MEMBERS
-		function getMyTeam(){
-			$http.get('/api/myteam')
-			//$http.get('/api/teams/name/'+$scope.user.team)
-				.success(function(data){
-					$scope.myTeam=data;
-				})
-				.error(function(data){
-					console.log(data);
-				});
-		}
+		$scope.change = function (tournament){
+			$scope.selectedTournament = tournament;
+		};
+
+		getUserInfo();
 		getMyTeam();
-
-		//GET ALL REQUESTS TO MY TEAM
-		function getAllRequests(){
-			$http.get('/api/myteam/requests')
-				.success(function(data){
-					$scope.requestsList=data;
-				})
-				.error(function(data){
-					console.log(data);
-				});
-		}
 		getAllRequests();
-
-
-	}]);
+		getAllTeams();	
+	});

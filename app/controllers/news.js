@@ -1,3 +1,4 @@
+'use strict';
 var User = require('../models/user');
 var News = require('../models/news');
 var Comment = require('../models/comment').model;
@@ -9,7 +10,7 @@ function getAllVisibleNews(next){
 		}
 		return next({ status: 200, content: news });
 	});
-};
+}
 
 function getAllNews(data, next){
 	User.findById(data.consumer.id, function (err, consumer){
@@ -31,7 +32,7 @@ function getAllNews(data, next){
 			}
 		}
 	});
-};
+}
 
 function getByIdNews(data, next){
 	User.findById(data.consumer.id, function (err, consumer){
@@ -53,7 +54,7 @@ function getByIdNews(data, next){
 			}
 		}
 	});
-};
+}
 
 function publishNews(data, next){
 	User.findById(data.consumer.id, function (err, consumer){
@@ -86,7 +87,8 @@ function publishNews(data, next){
 			}
 		}
 	});
-};
+}
+
 function editNews(data, next){
 	User.findById(data.consumer.id, function (err, consumer){
 		if(err){
@@ -133,7 +135,8 @@ function editNews(data, next){
 			}
 		}
 	});
-};
+}
+
 function removeNews(data, next){
 	User.findById(data.consumer.id, function (err, consumer){
 		if(err){
@@ -159,7 +162,7 @@ function removeNews(data, next){
 			}
 		}
 	});
-};
+}
 
 function makeComment(data, next){
 	User.findById(data.consumer.id, function (err, consumer){
@@ -192,7 +195,7 @@ function makeComment(data, next){
 			});
 		}
 	});
-};
+}
 
 function removeComment(data, next){
 	var found = false;
@@ -234,7 +237,7 @@ function removeComment(data, next){
 			}
 		}
 	});
-};
+}
 
 exports.getAllVisible = getAllVisibleNews;
 exports.getAll = getAllNews;

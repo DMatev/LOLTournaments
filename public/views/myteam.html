@@ -1,0 +1,38 @@
+<div class="container">
+    <div class="jumbotron">
+    	<div class="well">
+			<p ng-show="error" class="text-danger">{{error.message}}</p>
+			<div ng-show="!user.team">
+				<div class="row">
+					<div class="col-lg-6">
+						<team-create></team-create>
+					</div>
+					<div class="col-lg-6">
+						<team-teams-list></team-teams-list>
+					</div>
+				</div>
+			</div>
+			<div ng-show="user.team">
+				<h3><b>{{user.team}}</b></h3>
+				<div class="row">
+					<div class="col-lg-6">
+						<div class="row">
+							<div class="col-lg-10 col-lg-offset-1">
+								<team-member-list></team-member-list>
+							</div>
+							<div ng-show="myTeam.status==='free'" class="col-lg-5 col-lg-offset-1">
+								<button class="btn btn-danger btn-block" ng-click="leaveTeam()">
+									<span ng-show="user.duty==='player'">leave team</span>
+									<span ng-show="user.duty==='captain'">dismiss team</span>
+								</button>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-6" ng-show="user.duty==='captain' &&  myTeam.status==='free'">
+						<team-request-list></team-request-list>
+					</div>
+				</div>	
+			</div>
+		</div>
+    </div>
+</div>

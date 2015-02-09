@@ -1,0 +1,35 @@
+<div ng-show="tournaments">
+	<h4>Sign team for tournament</h4>
+	<div class="row">
+		<select ng-options="tournament.name.original for tournament in tournaments" ng-model="selectedTournament" ng-change="change(selectedTournament)">
+		</select>
+	        <div class="well" ng-show="selectedTournament">
+	        	<h2>{{selectedTournament.name.original}} - {{selectedTournament.stage.isOver?'Over':''}}
+	        		{{selectedTournament.stage.isRunning?'Running':''}}
+	        		{{(selectedTournament.stage.isSigningOpen?'Open for signup':'')}}</h2>
+	        	<div class="row" ng-if="!selectedTournament.stage.isSigningOpen">
+	        		<div class="col-lg-3" ng-repeat="pastStage in selectedTournament.history">
+		        		<h3>Stage {{$index +1}}</h3>
+		        		<div class="row" ng-repeat="match in pastStage.matches">
+		        			<p> <span ng-class="{'glyphicon glyphicon-plus-sign':match.winner===0,
+		        				'glyphicon glyphicon-minus-sign':match.winner===1}">{{match.team1}}</span>vs
+		        				<span ng-class="{'glyphicon glyphicon-plus-sign':match.winner===1,
+		        				'glyphicon glyphicon-minus-sign':match.winner===0}">{{match.team2}}</span></p>
+		        		</div>
+		        	</div>
+
+		        	<div class="col-lg-3" ng-if="selectedTournament.currentStage.matches.length===1">
+		        		<h3>Final stage</h3>
+		        		<div class="row">
+		        			<p> <span ng-class="{'glyphicon glyphicon-plus-sign':selectedTournament.currentStage.matches[0].winner===0,
+		        				'glyphicon glyphicon-minus-sign':selectedTournament.currentStage.matches[0].winner===1}">{{selectedTournament.currentStage.matches[0].team1}}</span>vs
+		        				<span ng-class="{'glyphicon glyphicon-plus-sign':tournament.currentStage.matches[0].winner===1,
+		        				'glyphicon glyphicon-minus-sign':selectedTournament.currentStage.matches[0].winner===0}">{{selectedTournament.currentStage.matches[0].team2}}</span></p>
+		        		</div>
+		        	</div>
+	        	</div>
+		  	</div>
+
+		<button class="btn btn-danger" ng-click="joinTournament(selectedTournament)">sign</button>
+	</div>
+</div>

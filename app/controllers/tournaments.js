@@ -1,4 +1,6 @@
+'use strict';
 var User = require('../models/user');
+var Team = require('../models/team');
 var Tournament = require('../models/tournament');
 var HallOfFame = require('../models/hallOfFame');
 
@@ -18,7 +20,7 @@ function getAll(data, next){
 			});
 		}
 	});
-};
+}
 
 function getByName(data, next){
 	User.findById(data.consumer.id, function (err, consumer){
@@ -36,7 +38,7 @@ function getByName(data, next){
 			});
 		}
 	});
-};
+}
 
 function create(data, next){
 	var tournamentNameLowerCase = data.tournament.name.toLowerCase();
@@ -76,7 +78,7 @@ function create(data, next){
 			}
 		}
 	});
-};
+}
 
 function startFirstStage(data, next){
 	User.findById(data.consumer.id, function (err, consumer){
@@ -119,7 +121,7 @@ function startFirstStage(data, next){
 			}
 		}
 	});
-};
+}
 
 function setCurrentStageEndDate(data, next){
 	User.findById(data.consumer.id, function (err, consumer){
@@ -152,7 +154,7 @@ function setCurrentStageEndDate(data, next){
 			}
 		}
 	});
-};
+}
 
 function moveCurrentStageToHistory(data, next){
 	var tournamentNameLowerCase = data.name.toLowerCase();
@@ -185,7 +187,7 @@ function moveCurrentStageToHistory(data, next){
 									return next({ status: 400, content: { code: 35, description: 'last stage of tournament', message: 'This tournament is in his last stage' } });
 								}
 							} else {
-								Tournament.update({ 'name.lowerCase': tournamentNameLowerCase }, { $push: { history: history }, $set: { currentStage: currentStage, resultsFromCaptains: [] } }, { multi: true }, function (err, result){
+								Tournament.update({ 'name.lowerCase': tournamentNameLowerCase }, { $push: { history: history }, $set: { currentStage: currentStage, resultsFromCaptains: [] } }, { multi: true }, function (err){
 									if(err){
 										return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 									} else {
@@ -200,7 +202,7 @@ function moveCurrentStageToHistory(data, next){
 			}
 		}
 	});
-};
+}
 
 function finish(data, next){
 	User.findById(data.consumer.id, function (err, consumer){
@@ -236,18 +238,24 @@ function finish(data, next){
 									if(err){
 										return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 									} else {
-										var record = new HallOfFame();
-										if(tournament.currentStage.matches[0].winner === 0){
-											record.team = tournament.currentStage.matches[0].team1;
-										} else {
-											record.team = tournament.currentStage.matches[0].team2;
-										}
-										record.tournament = tournament.name.original;
-										record.save(function (err){
+										Team.update({ 'currentTournament': tournament.name.original }, { $set: { 'status': 'free' } }, { multi: true }, function (err){
 											if(err){
 												return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 											} else {
-												return next({ status: 200, content: 'You successfully end tournament' });
+												var record = new HallOfFame();
+												if(tournament.currentStage.matches[0].winner === 0){
+													record.team = tournament.currentStage.matches[0].team1;
+												} else {
+													record.team = tournament.currentStage.matches[0].team2;
+												}
+												record.tournament = tournament.name.original;
+												record.save(function (err){
+													if(err){
+														return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
+													} else {
+														return next({ status: 200, content: 'You successfully end tournament' });
+													}
+												});
 											}
 										});
 									}
@@ -260,7 +268,7 @@ function finish(data, next){
 			}
 		}
 	});
-};
+}
 
 function tryResolveMatches(data, next){
 	User.findById(data.consumer.id, function (err, consumer){
@@ -284,7 +292,7 @@ function tryResolveMatches(data, next){
 							if(err){
 								return next({ status: 400, content: { code: 33, description: 'tournament stage is not "running"', message: 'Torunament stage is not "running"' } });
 							} else {
-								tournament.save(function (er){
+								tournament.save(function (err){
 									if(err){
 										return next({ status: 500, content: { code: 0, description: 'mongodb error', message: 'Server is busy, please try again later' } });
 									} else {
@@ -302,7 +310,7 @@ function tryResolveMatches(data, next){
 			}
 		}
 	});
-};
+}
 
 function resolveMatch(data, next){
 	var found = false;
@@ -345,7 +353,7 @@ function resolveMatch(data, next){
 			}
 		}
 	});
-};
+}
 
 exports.getAll = getAll;
 exports.getByName = getByName;

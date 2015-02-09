@@ -1,2 +1,6 @@
 # LOLTournaments
-Homework
+
+Installation
+--------------
+- $ npm install
+- $ bower install

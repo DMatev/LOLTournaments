@@ -7,4 +7,4 @@ Installation
  
 
 Running at
-[LOLTournaments](hw-tournaments.herokuapp.com)
+<a href="http://hw-tournaments.herokuapp.com/">LOLTournaments</a>
